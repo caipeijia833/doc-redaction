@@ -19,6 +19,7 @@
 /*.zip
 /*.zip.*
 *.jar
+!app/gradle/wrapper/gradle-wrapper.jar
 *.war
 *.ear
 *.tar
