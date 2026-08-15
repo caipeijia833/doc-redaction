@@ -34,9 +34,6 @@ public final class RuleEngine {
     private static final int MAX_CUSTOM_RULES = 100;
     private static final int MAX_RULE_HISTORY = 20;
     private static final int MAX_RULE_TEST_TEXT = 20_000;
-    private static final Pattern NESTED_UNBOUNDED_QUANTIFIER = Pattern.compile(
-            "\\((?:\\\\.|[^)])*[+*](?:\\\\.|[^)])*\\)\\s*(?:[+*]|\\{)");
-    private static final Pattern NUMERIC_BACK_REFERENCE = Pattern.compile("\\\\[1-9]");
     private final List<RuleDefinition> baseRules;
     private final Path settingsFile;
     private final byte[] pseudonymKey;
@@ -604,10 +601,10 @@ public final class RuleEngine {
         if (regex == null || regex.isBlank() || regex.length() > 500) {
             throw new IllegalArgumentException("正则表达式应为1至500个字符");
         }
-        if (NESTED_UNBOUNDED_QUANTIFIER.matcher(regex).find()) {
+        if (containsNestedUnboundedQuantifier(regex)) {
             throw new IllegalArgumentException("正则表达式包含嵌套无限量词，可能导致处理超时");
         }
-        if (NUMERIC_BACK_REFERENCE.matcher(regex).find()) {
+        if (containsNumericBackReference(regex)) {
             throw new IllegalArgumentException("自定义规则不允许数字反向引用");
         }
         try {
@@ -619,6 +616,111 @@ public final class RuleEngine {
         } catch (com.google.re2j.PatternSyntaxException ex) {
             throw new IllegalArgumentException("正则表达式不受支持或语法错误：" + ex.getMessage());
         }
+    }
+
+    /**
+     * Detects nested unlimited quantifiers without executing a Java regular expression
+     * over user-provided pattern text. Custom rules are executed by RE2/J, but this
+     * deterministic parser preserves the user-facing policy that rejects common
+     * nested-quantifier forms such as {@code (a+)+}.
+     */
+    private static boolean containsNestedUnboundedQuantifier(String regex) {
+        List<Boolean> groups = new ArrayList<>();
+        boolean inCharacterClass = false;
+        for (int index = 0; index < regex.length(); index++) {
+            char value = regex.charAt(index);
+            if (value == '\\') {
+                index++;
+                continue;
+            }
+            if (inCharacterClass) {
+                if (value == ']') {
+                    inCharacterClass = false;
+                }
+                continue;
+            }
+            if (value == '[') {
+                inCharacterClass = true;
+                continue;
+            }
+            if (value == '(') {
+                groups.add(false);
+                continue;
+            }
+            if (value == ')') {
+                if (groups.isEmpty()) {
+                    continue;
+                }
+                boolean groupContainsUnlimited = groups.removeLast();
+                int quantifierEnd = unboundedQuantifierEnd(regex, index + 1);
+                if (groupContainsUnlimited && quantifierEnd >= 0) {
+                    return true;
+                }
+                if (!groups.isEmpty() && (groupContainsUnlimited || quantifierEnd >= 0)) {
+                    groups.set(groups.size() - 1, true);
+                }
+                if (quantifierEnd >= 0) {
+                    index = quantifierEnd;
+                }
+                continue;
+            }
+            int quantifierEnd = unboundedQuantifierEnd(regex, index);
+            if (quantifierEnd >= 0) {
+                if (!groups.isEmpty()) {
+                    groups.set(groups.size() - 1, true);
+                }
+                index = quantifierEnd;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsNumericBackReference(String regex) {
+        for (int index = 0; index + 1 < regex.length(); index++) {
+            if (regex.charAt(index) == '\\'
+                    && !isEscaped(regex, index)
+                    && regex.charAt(index + 1) >= '1'
+                    && regex.charAt(index + 1) <= '9') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isEscaped(String value, int index) {
+        int backslashes = 0;
+        for (int cursor = index - 1; cursor >= 0 && value.charAt(cursor) == '\\'; cursor--) {
+            backslashes++;
+        }
+        return (backslashes & 1) != 0;
+    }
+
+    /** Returns the final quantifier character when the atom has an unlimited quantifier. */
+    private static int unboundedQuantifierEnd(String regex, int index) {
+        if (index >= regex.length()) {
+            return -1;
+        }
+        char value = regex.charAt(index);
+        if (value == '*' || value == '+') {
+            return index;
+        }
+        if (value != '{') {
+            return -1;
+        }
+        int cursor = index + 1;
+        while (cursor < regex.length() && Character.isDigit(regex.charAt(cursor))) {
+            cursor++;
+        }
+        if (cursor == index + 1 || cursor >= regex.length() || regex.charAt(cursor) != ',') {
+            return -1;
+        }
+        cursor++;
+        int upperBoundStart = cursor;
+        while (cursor < regex.length() && Character.isDigit(regex.charAt(cursor))) {
+            cursor++;
+        }
+        return upperBoundStart == cursor && cursor < regex.length() && regex.charAt(cursor) == '}'
+                ? cursor : -1;
     }
 
     public List<SensitiveMatch> detect(String text) {

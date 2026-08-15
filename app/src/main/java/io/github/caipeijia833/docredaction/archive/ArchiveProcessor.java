@@ -93,12 +93,11 @@ public final class ArchiveProcessor {
                 if (entry.isDirectory()) {
                     continue;
                 }
-                boolean safe = ArchivePolicy.isSafeRelativePath(entry.getName());
+                String entryName = entry.getName();
                 boolean readable = source.canReadEntryData(entry) && !entry.isUnixSymlink();
-                ArchiveCategory category = safe && readable
-                        ? ArchivePolicy.classify(entry.getName()) : ArchiveCategory.DANGEROUS;
+                ArchiveCategory category = readable ? ArchivePolicy.classify(entryName) : ArchiveCategory.DANGEROUS;
                 try (InputStream content = readable ? source.getInputStream(entry) : InputStream.nullInputStream()) {
-                    handleEntry(index, entry.getName(), entry.getSize(), safe, readable, category, content,
+                    handleEntry(index, entryName, entry.getSize(), readable, category, content,
                             work, includeUnprocessed, decisions, report, manifest, usedPaths, expanded,
                             (name, path) -> addZipFile(target, name, path));
                 }
@@ -133,12 +132,11 @@ public final class ArchiveProcessor {
                 if (entry.isDirectory()) {
                     continue;
                 }
-                boolean safe = ArchivePolicy.isSafeRelativePath(entry.getName());
+                String entryName = entry.getName();
                 boolean link = entry.isLink() || entry.isSymbolicLink();
                 boolean readable = source.canReadEntryData(entry) && !link;
-                ArchiveCategory category = safe && readable
-                        ? ArchivePolicy.classify(entry.getName()) : ArchiveCategory.DANGEROUS;
-                handleEntry(index, entry.getName(), entry.getSize(), safe, readable, category, source,
+                ArchiveCategory category = readable ? ArchivePolicy.classify(entryName) : ArchiveCategory.DANGEROUS;
+                handleEntry(index, entryName, entry.getSize(), readable, category, source,
                         work, includeUnprocessed, decisions, report, manifest, usedPaths, expanded,
                         (name, path) -> addTarFile(target, name, path));
             }
@@ -165,12 +163,11 @@ public final class ArchiveProcessor {
                 if (entry.isDirectory()) {
                     continue;
                 }
-                boolean safe = ArchivePolicy.isSafeRelativePath(entry.getName());
+                String entryName = entry.getName();
                 boolean readable = entry.hasStream();
-                ArchiveCategory category = safe && readable
-                        ? ArchivePolicy.classify(entry.getName()) : ArchiveCategory.DANGEROUS;
+                ArchiveCategory category = readable ? ArchivePolicy.classify(entryName) : ArchiveCategory.DANGEROUS;
                 try (InputStream content = readable ? source.getInputStream(entry) : InputStream.nullInputStream()) {
-                    handleEntry(index, entry.getName(), entry.getSize(), safe, readable, category, content,
+                    handleEntry(index, entryName, entry.getSize(), readable, category, content,
                             work, includeUnprocessed, decisions, report, manifest, usedPaths, expanded,
                             (name, path) -> addSevenZipFile(target, name, path));
                 }
@@ -186,12 +183,23 @@ public final class ArchiveProcessor {
         return report;
     }
 
-    private void handleEntry(int index, String entryName, long declaredSize, boolean safe, boolean readable,
+    private void handleEntry(int index, String entryName, long declaredSize, boolean readable,
             ArchiveCategory category, InputStream content, Path work, boolean includeUnprocessed,
             Map<Integer, ArchiveEntryAction> decisions,
             ProcessReport aggregate, List<ManifestItem> manifest, Set<String> usedPaths,
             ExpandedDataLimiter expanded, EntrySink sink) throws Exception {
-        String normalizedName = entryName.replace('\\', '/');
+        Path entryRoot = work.resolve(".archive-entry-path-root").toAbsolutePath().normalize();
+        Path resolvedEntry = null;
+        boolean declaredSafe = ArchivePolicy.isSafeRelativePath(entryName);
+        if (declaredSafe) {
+            try {
+                resolvedEntry = entryRoot.resolve(entryName.replace('\\', '/')).normalize();
+            } catch (RuntimeException ignored) {
+                // Invalid path syntax is treated as unsafe and is never written to an output archive.
+            }
+        }
+        boolean safe = resolvedEntry != null && resolvedEntry.startsWith(entryRoot);
+        String normalizedName = safe ? relativeArchivePath(entryRoot, resolvedEntry) : displayEntryName(entryName);
         if (!safe || !readable || category == ArchiveCategory.DANGEROUS) {
             manifest.add(new ManifestItem(normalizedName, null, category.name(), "excluded",
                     safe ? "条目不可读取或属于高风险类型" : "路径不安全"));
@@ -227,7 +235,7 @@ public final class ArchiveProcessor {
                 ProcessReport itemReport = processor.process(extracted, processed, ruleEngine);
                 ResidualScanner.verify(extracted, processed, ruleEngine, itemReport);
                 aggregate.merge(itemReport);
-                String outputName = allocateArchivePath(normalizedName, usedPaths);
+                String outputName = safeOutputArchivePath(work, allocateArchivePath(normalizedName, usedPaths));
                 sink.add(outputName, processed);
                 manifest.add(new ManifestItem(normalizedName, outputName, category.name(), "redacted", null));
             } catch (ExpandedDataLimiter.LimitExceededException ex) {
@@ -245,7 +253,7 @@ public final class ArchiveProcessor {
             Path unchanged = work.resolve("entry-" + index + ".unchanged");
             try {
                 copyBounded(content, unchanged, ArchivePolicy.MAX_ENTRY_BYTES, expanded);
-                String outputName = allocateArchivePath(normalizedName, usedPaths);
+                String outputName = safeOutputArchivePath(work, allocateArchivePath(normalizedName, usedPaths));
                 sink.add(outputName, unchanged);
                 manifest.add(new ManifestItem(normalizedName, outputName, category.name(), "included_unprocessed",
                         "用户已确认原样保留；未执行敏感信息检查"));
@@ -258,6 +266,38 @@ public final class ArchiveProcessor {
     private String allocateArchivePath(String originalPath, Set<String> usedPaths) {
         String redacted = FilenameRedactor.redactArchivePath(originalPath, ruleEngine);
         return FilenameRedactor.allocateUniquePath(redacted, usedPaths);
+    }
+
+    /**
+     * Re-validates the final redacted path immediately before it is written to an
+     * output archive. The normalized path must remain within a trusted virtual
+     * archive root, preventing path traversal through either source names or a
+     * future filename-redaction implementation.
+     */
+    private static String safeOutputArchivePath(Path work, String candidateName) throws IOException {
+        Path outputRoot = work.resolve(".archive-output-path-root").toAbsolutePath().normalize();
+        Path candidate;
+        try {
+            candidate = outputRoot.resolve(candidateName).normalize();
+        } catch (RuntimeException ex) {
+            throw new IOException("Output archive path is invalid", ex);
+        }
+        if (!candidate.startsWith(outputRoot)) {
+            throw new IOException("Output archive path escapes its root");
+        }
+        String relative = relativeArchivePath(outputRoot, candidate);
+        if (!ArchivePolicy.isSafeRelativePath(relative)) {
+            throw new IOException("Output archive path is unsafe");
+        }
+        return relative;
+    }
+
+    private static String relativeArchivePath(Path root, Path candidate) {
+        return root.relativize(candidate).toString().replace('\\', '/');
+    }
+
+    private static String displayEntryName(String entryName) {
+        return entryName == null ? "(missing entry name)" : entryName.replace('\0', '?').replace('\\', '/');
     }
 
     private static Set<String> initialUsedPaths() {

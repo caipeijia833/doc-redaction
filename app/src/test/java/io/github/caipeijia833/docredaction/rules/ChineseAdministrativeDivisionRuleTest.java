@@ -64,9 +64,11 @@ class ChineseAdministrativeDivisionRuleTest {
     }
 
     @Test
-    void keepsLargeNoMatchInputLinearEnoughForLocalUse() {
+    void keepsLargeNoMatchLexiconScanLinearEnoughForLocalUse() {
         String text = "完全不包含行政区划名称的合成段落。".repeat(60_000);
-        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> engine.detect(text));
+        ChineseAdministrativeDivisionLexicon lexicon = ChineseAdministrativeDivisionLexicon.instance();
+        assertTimeoutPreemptively(Duration.ofSeconds(10),
+                () -> lexicon.find(text, ignored -> true, ignored -> false));
     }
 
     private void assertDetected(String ruleId, String text) {

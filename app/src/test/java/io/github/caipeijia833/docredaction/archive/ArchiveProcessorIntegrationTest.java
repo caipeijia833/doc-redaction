@@ -47,9 +47,9 @@ class ArchiveProcessorIntegrationTest {
         ArchiveInspection inspection = new ArchiveInspector().inspect(input);
 
         assertEquals("zip", inspection.format());
-        assertEquals(4, inspection.fileCount());
+        assertEquals(8, inspection.fileCount());
         assertEquals(1, inspection.processableCount());
-        assertEquals(3, inspection.excludedByDefaultCount());
+        assertEquals(7, inspection.excludedByDefaultCount());
         assertTrue(inspection.counts().getOrDefault(ArchiveCategory.DANGEROUS, 0) >= 2);
 
         Path output = temp.resolve("卷宗_脱敏.zip");
@@ -66,6 +66,10 @@ class ArchiveProcessorIntegrationTest {
             assertNull(zip.getEntry("说明.txt"));
             assertNull(zip.getEntry("run.ps1"));
             assertNull(zip.getEntry("../escape.txt"));
+            assertNull(zip.getEntry("../windows-escape.txt"));
+            assertNull(zip.getEntry("/rooted-escape.txt"));
+            assertNull(zip.getEntry("C:/drive-escape.txt"));
+            assertNull(zip.getEntry("folder/../../nested-escape.txt"));
         }
     }
 
@@ -138,6 +142,10 @@ class ArchiveProcessorIntegrationTest {
             archive.putArchiveEntry(entry);
             archive.write(sourceDocument);
             archive.closeArchiveEntry();
+            SevenZArchiveEntry traversal = archive.createArchiveEntry(sourceDocument.toFile(), "../escape.docx");
+            archive.putArchiveEntry(traversal);
+            archive.write(sourceDocument);
+            archive.closeArchiveEntry();
         }
 
         ArchiveInspection inspection = new ArchiveInspector().inspect(input);
@@ -152,6 +160,7 @@ class ArchiveProcessorIntegrationTest {
             SevenZArchiveEntry documentEntry = null;
             boolean foundManifest = false;
             for (SevenZArchiveEntry entry : archive.getEntries()) {
+                assertTrue(ArchivePolicy.isSafeRelativePath(entry.getName()), entry.getName());
                 if (entry.getName().equals("case/document.docx")) {
                     documentEntry = entry;
                 }
@@ -206,6 +215,12 @@ class ArchiveProcessorIntegrationTest {
             archive.putArchiveEntry(entry);
             archive.write(documentBytes);
             archive.closeArchiveEntry();
+            TarArchiveEntry traversal = new TarArchiveEntry("../escape.docx");
+            traversal.setSize(documentBytes.length);
+            traversal.setModTime(0);
+            archive.putArchiveEntry(traversal);
+            archive.write(documentBytes);
+            archive.closeArchiveEntry();
         }
 
         ArchiveInspection inspection = new ArchiveInspector().inspect(input);
@@ -223,6 +238,7 @@ class ArchiveProcessorIntegrationTest {
              TarArchiveInputStream archive = new TarArchiveInputStream(decoded)) {
             TarArchiveEntry entry;
             while ((entry = archive.getNextEntry()) != null) {
+                assertTrue(ArchivePolicy.isSafeRelativePath(entry.getName()), entry.getName());
                 if (entry.getName().equals("case/document.docx")) {
                     foundDocument = true;
                     try (XWPFDocument document = new XWPFDocument(archive)) {
@@ -257,6 +273,10 @@ class ArchiveProcessorIntegrationTest {
             add(zip, "说明_13800138000.txt", "未检查文本".getBytes(StandardCharsets.UTF_8));
             add(zip, "run.ps1", "Write-Host unsafe".getBytes(StandardCharsets.UTF_8));
             add(zip, "../escape.txt", "escape".getBytes(StandardCharsets.UTF_8));
+            add(zip, "..\\windows-escape.txt", "escape".getBytes(StandardCharsets.UTF_8));
+            add(zip, "/rooted-escape.txt", "escape".getBytes(StandardCharsets.UTF_8));
+            add(zip, "C:\\drive-escape.txt", "escape".getBytes(StandardCharsets.UTF_8));
+            add(zip, "folder/../../nested-escape.txt", "escape".getBytes(StandardCharsets.UTF_8));
         }
     }
 
