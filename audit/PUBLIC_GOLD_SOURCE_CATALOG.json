@@ -1,0 +1,86 @@
+{
+  "reviewedAt": "2026-08-14",
+  "policy": {
+    "bundledSources": "Only pinned files with clear redistribution permission and retained license text",
+    "linkOnlySources": "License-restricted, rehosting-restricted, privacy-sensitive, oversized, or task-mismatched data",
+    "goldDefinition": "A sample is gold only when sensitive spans or time/space regions are explicitly annotated for redaction"
+  },
+  "sources": [
+    {
+      "id": "ofdrw-public-test-resources",
+      "url": "https://github.com/ofdrw/ofdrw/tree/7459e35082170061efa6b399a6518dbc219f08ac/ofdrw-converter/src/test/resources",
+      "kind": "OFD format compatibility",
+      "license": "Apache-2.0",
+      "decision": "BUNDLED_TEST_ONLY",
+      "local": "app/src/test/resources/public/ofdrw",
+      "files": ["helloworld.ofd", "containsJPEG.ofd", "signout.ofd"],
+      "goldForRedaction": false,
+      "reason": "Real OFD samples with clear redistribution terms; useful for rendering compatibility but without sensitive-span annotations"
+    },
+    {
+      "id": "cail2018",
+      "url": "https://github.com/china-ai-law-challenge/cail2018",
+      "kind": "Chinese legal judgment prediction corpus",
+      "license": "Repository code is MIT; external dataset terms not established by the repository license",
+      "decision": "LINK_ONLY",
+      "goldForRedaction": false,
+      "reason": "Legal-domain text, but labels are accusation, law article and sentence rather than sensitive information; no redistribution assumption"
+    },
+    {
+      "id": "xfund",
+      "url": "https://github.com/doc-analysis/XFUND",
+      "kind": "Multilingual form images and key-value annotations including Chinese",
+      "license": "CC-BY-NC-SA-4.0",
+      "decision": "LINK_ONLY",
+      "goldForRedaction": false,
+      "reason": "Useful for OCR/layout research, but non-commercial/share-alike terms and no PII-redaction label taxonomy"
+    },
+    {
+      "id": "funsd",
+      "url": "https://github.com/crcresearch/FUNSD",
+      "kind": "Noisy scanned form understanding",
+      "license": "Original data is limited to non-commercial, research and educational use",
+      "decision": "LINK_ONLY",
+      "goldForRedaction": false,
+      "reason": "OCR boxes and form entities are not sensitive-span annotations; original data terms are not suitable for the release package"
+    },
+    {
+      "id": "paddleocr",
+      "url": "https://github.com/PaddlePaddle/PaddleOCR",
+      "kind": "OCR toolkit and document parsing references",
+      "license": "Apache-2.0 for the repository; individual datasets and models require separate review",
+      "decision": "LINK_ONLY",
+      "goldForRedaction": false,
+      "reason": "A toolkit, not a single PII-redaction gold corpus; current product remains on the audited Tesseract closure"
+    },
+    {
+      "id": "mozilla-common-voice",
+      "url": "https://commonvoice.mozilla.org/en/datasets",
+      "kind": "Speech audio and transcripts",
+      "license": "CC0 with current catalog conditions including no speaker re-identification and no rehosting/resharing",
+      "decision": "LINK_ONLY",
+      "goldForRedaction": false,
+      "reason": "Useful for ASR accuracy, but not annotated for sensitive speech and not eligible for redistribution in this repository"
+    },
+    {
+      "id": "modood-cn-administrative-divisions-2.7.0",
+      "url": "https://github.com/modood/Administrative-divisions-of-China",
+      "kind": "Mainland China administrative place-name lexicon",
+      "license": "WTFPL",
+      "decision": "BUNDLED_RUNTIME_DERIVATIVE",
+      "local": "app/src/main/resources/rules/cn-administrative-divisions-2023.tsv.gz",
+      "goldForRedaction": false,
+      "reason": "Pinned 2023-06-30 baseline for deterministic dictionary matching; explicitly not represented as current official 2026 data"
+    },
+    {
+      "id": "cn-mainland-synthetic-gold-v1",
+      "url": null,
+      "kind": "Synthetic redaction rule gold corpus",
+      "license": "Project license when selected",
+      "decision": "BUNDLED_TEST_ONLY",
+      "local": "app/src/test/resources/gold/cn-mainland-rules-v1.jsonl",
+      "goldForRedaction": true,
+      "reason": "Exact rule and value annotations without real personal data; suitable for deterministic regression and release gating"
+    }
+  ]
+}

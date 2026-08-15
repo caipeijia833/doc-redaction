@@ -1,0 +1,216 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.cyclonedx.bom' version '3.4.0'
+}
+
+group = 'io.github.caipeijia833.docredaction'
+version = '0.1.0-poc'
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    ofdWorker {
+        java.srcDir 'src/ofdWorker/java'
+        resources.srcDir 'src/ofdWorker/resources'
+    }
+}
+
+def openCvRoot = providers.gradleProperty('opencvRoot')
+        .orElse(new File(rootDir, '../.tools/opencv-official-4.13.0/opencv').absolutePath)
+// The official OpenCV Java binding is small enough to keep in source control.
+// Native libraries remain release-only. This lets a clean clone compile and
+// run non-native tests without depending on the maintainer's .tools cache.
+def openCvJar = providers.gradleProperty('opencvJar')
+        .map { new File(it) }
+        .orElse(layout.projectDirectory.file('libs/opencv-4130.jar'))
+def openCvLibrary = openCvRoot.map { new File(it, 'build/java/x64/opencv_java4130.dll') }
+
+dependencies {
+    implementation 'org.apache.poi:poi-ooxml:5.5.1'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.8'
+    implementation 'org.apache.commons:commons-compress:1.28.0'
+    implementation 'org.tukaani:xz:1.10'
+    implementation 'org.xerial:sqlite-jdbc:3.53.1.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.1'
+    implementation 'net.java.dev.jna:jna:5.19.1'
+    implementation 'net.java.dev.jna:jna-platform:5.19.1'
+    // Official OpenCV 4.13.0 Java binding. Its SHA-256 is verified before
+    // compilation; native libraries are supplied separately by the package.
+    implementation files(openCvJar)
+    // User-defined rules run on RE2/J's linear-time engine. Built-in rules keep
+    // Java regex because they are shipped and reviewed with the application.
+    implementation 'com.google.re2j:re2j:1.8'
+    // Override the vulnerable Log4j API pulled transitively by Office tooling.
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.5'
+    runtimeOnly 'org.slf4j:slf4j-nop:1.7.36'
+
+    ofdWorkerImplementation('org.ofdrw:ofdrw-converter:2.4.0') {
+        exclude group: 'com.itextpdf'
+    }
+    // OFDRW 2.4.0 was compiled against PDFBox 2.x. Keep the current patched
+    // 2.x line in the isolated OFD worker instead of mixing it with PDFBox 3.
+    ofdWorkerImplementation 'org.apache.pdfbox:pdfbox:2.0.37'
+    // OFDRW pulls a 2014 org.json release with known denial-of-service flaws.
+    ofdWorkerImplementation 'org.json:json:20260719'
+    ofdWorkerRuntimeOnly 'org.slf4j:slf4j-nop:1.7.36'
+
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    mainClass = 'io.github.caipeijia833.docredaction.Main'
+    applicationDefaultJvmArgs = ['-Dfile.encoding=UTF-8']
+}
+
+dependencyLocking {
+    lockAllConfigurations()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    systemProperty 'file.encoding', 'UTF-8'
+    dependsOn tasks.named('prepareOfdWorker')
+    systemProperty 'docredaction.ofd.classpath', (
+            layout.buildDirectory.file("ofd-worker/doc-redaction-ofd-worker-${version}.jar").get().asFile.absolutePath
+                    + File.pathSeparator
+                    + layout.buildDirectory.dir('ofd-worker').get().asFile.absolutePath + File.separator + '*')
+    if (openCvLibrary.get().isFile()) {
+        systemProperty 'docredaction.media.opencvLibrary', openCvLibrary.get().absolutePath
+    }
+    providers.gradleProperty('ocrRoot').orNull?.with { root ->
+        systemProperty 'docredaction.ocr.executable', new File(root, 'bin/tesseract.exe').absolutePath
+        systemProperty 'docredaction.ocr.dataPath', new File(root, 'share/tessdata').absolutePath
+        systemProperty 'docredaction.ocr.integration', 'true'
+    }
+    providers.gradleProperty('mediaTestRoot').orNull?.with { root ->
+        systemProperty 'mediaTestRoot', root
+    }
+    providers.gradleProperty('mediaSpeechSample').orNull?.with { sample ->
+        systemProperty 'mediaSpeechSample', sample
+    }
+    providers.gradleProperty('mediaVideoSample').orNull?.with { sample ->
+        systemProperty 'mediaVideoSample', sample
+    }
+    providers.gradleProperty('opencvVisualSamples').orNull?.with { samples ->
+        systemProperty 'opencvVisualSamples', samples
+    }
+    providers.gradleProperty('mediaSubtitleSample').orNull?.with { sample ->
+        systemProperty 'mediaSubtitleSample', sample
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform {
+        excludeTags 'native'
+    }
+}
+
+tasks.register('nativeIntegrationTest', Test) {
+    description = 'Runs OCR and media tests that require pinned local native components.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'native'
+    }
+    shouldRunAfter tasks.named('test')
+}
+
+def expectedOpenCvJarSha256 = '00e2c856933993d948910f77344ac99ce38b0f875af2866a164f8fff82e9fb5f'
+tasks.register('verifyOpenCvBinding') {
+    inputs.file(openCvJar)
+    doLast {
+        File binding = openCvJar.get().asFile
+        if (!binding.isFile()) {
+            throw new GradleException("Missing official OpenCV Java binding: ${binding}")
+        }
+        def digest = java.security.MessageDigest.getInstance('SHA-256')
+        binding.withInputStream { stream ->
+            byte[] buffer = new byte[8192]
+            for (int read = stream.read(buffer); read >= 0; read = stream.read(buffer)) {
+                if (read > 0) digest.update(buffer, 0, read)
+            }
+        }
+        String actual = digest.digest().encodeHex().toString()
+        if (actual != expectedOpenCvJarSha256) {
+            throw new GradleException("OpenCV Java binding SHA-256 mismatch: ${actual}")
+        }
+    }
+}
+
+tasks.named('compileJava') {
+    dependsOn tasks.named('verifyOpenCvBinding')
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+tasks.register('fatJar', Jar) {
+    archiveBaseName = 'doc-redaction-poc'
+    archiveClassifier = 'all'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+tasks.register('ofdWorkerJar', Jar) {
+    archiveBaseName = 'doc-redaction-ofd-worker'
+    archiveClassifier = ''
+    from sourceSets.ofdWorker.output
+    manifest {
+        attributes 'Main-Class': 'io.github.caipeijia833.docredaction.ofdworker.OfdWorkerMain'
+    }
+}
+
+tasks.register('prepareOfdWorker', Sync) {
+    dependsOn tasks.named('ofdWorkerJar')
+    into layout.buildDirectory.dir('ofd-worker')
+    from(tasks.named('ofdWorkerJar'))
+    from configurations.ofdWorkerRuntimeClasspath
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('fatJar')
+    dependsOn tasks.named('prepareOfdWorker')
+}
+
+tasks.named('cyclonedxDirectBom') {
+    includeConfigs = ['runtimeClasspath', 'ofdWorkerRuntimeClasspath']
+    skipConfigs = ['(?i).*test.*']
+    testConfigs = []
+    projectType = org.cyclonedx.model.Component.Type.APPLICATION
+    componentName = 'doc-redaction'
+    componentVersion = project.version.toString()
+    componentGroup = project.group.toString()
+    def projectLicense = new org.cyclonedx.model.License()
+    projectLicense.id = 'Apache-2.0'
+    projectLicense.url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+    def projectLicenseChoice = new org.cyclonedx.model.LicenseChoice()
+    projectLicenseChoice.addLicense(projectLicense)
+    licenseChoice = projectLicenseChoice
+    includeLicenseText = true
+}

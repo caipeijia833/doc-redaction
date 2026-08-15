@@ -1,0 +1,109 @@
+# ===== Core repository outputs (keep in git) =====
+# Nothing here by design. Keep source and docs by default.
+
+# ===== Source/build artifacts that should stay local =====
+/.tools/
+/.gradle/
+/app/.gradle/
+/app/build/
+/dist/
+/release-assets/
+/browser-qa-data/
+/stress-data/
+/stress-debug/
+/stress-runs/
+/stress-results/
+/upstream/
+
+# ===== Generated binaries and packaged artifacts =====
+/*.zip
+/*.zip.*
+*.jar
+*.war
+*.ear
+*.tar
+*.tar.gz
+*.tgz
+*.xz
+*.7z
+*.rar
+*.part
+
+# ===== Local runtime state =====
+/data/
+.env
+.env.*
+*.log
+*.tmp
+*.temp
+/tmp/
+
+# ===== Test fixtures with sensitive/proprietary content =====
+/*.ofd
+/*.docx
+/*.xlsx
+/*.pptx
+/*.pdf
+/*.png
+/*.jpg
+/*.jpeg
+
+# Public fixtures are an explicit, synthetic/public-source allowlist. Do not
+# add real documents under samples/ or public test resources: Git ignores them.
+/samples/*
+!/samples/README.md
+!/samples/synthetic-acceptance-sample.pdf
+!/samples/合成验收样例.docx
+!/samples/合成验收样例.xlsx
+!/samples/合成验收样例.pptx
+!/samples/media/
+/samples/media/*
+!/samples/media/README.md
+
+/app/src/test/resources/public/ofdrw/*
+!/app/src/test/resources/public/ofdrw/LICENSE
+!/app/src/test/resources/public/ofdrw/PROVENANCE.md
+!/app/src/test/resources/public/ofdrw/helloworld.ofd
+!/app/src/test/resources/public/ofdrw/containsJPEG.ofd
+!/app/src/test/resources/public/ofdrw/signout.ofd
+
+# ===== AI / OCR / CV / media runtime assets =====
+/models/
+/model/
+/runtime/
+/tessdata/
+/assets/tessdata/
+*.gguf
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# ===== Release & prepublication drafts (generated) =====
+/PRE_PUBLICATION_CHECKLIST.md
+/OPENAI_OSS_APPLICATION_DRAFT.md
+/audit/OPEN_SOURCE_READINESS_REVIEW_*.md
+
+# ===== Security/research evidence that is regenerated each run =====
+/audit/results/security-gate-*/
+/stress-results/*.json
+
+# ===== Build/download caches =====
+/node_modules/
+/.mvn/
+/.m2/
+/.gradle_cache/
+/build/
+/out/
+/target/
+/dist/
+
+# ===== IDE/OS/editor temp =====
+.idea/
+.vscode/
+*.iml
+*.iws
+.DS_Store
+Thumbs.db
+desktop.ini

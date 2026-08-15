@@ -1,0 +1,47 @@
+name: Bug report / 缺陷报告
+description: Report a reproducible defect using synthetic or safely redacted data.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not upload real case files, personal data, secrets, passwords, restore ciphertext, or unredacted logs.
+  - type: input
+    id: version
+    attributes:
+      label: Version / 版本
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system / 操作系统
+      options: [Windows 10, Windows 11, macOS 13 Intel, macOS 13 Apple Silicon, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps / 复现步骤
+      description: Use synthetic data and include the input format and size.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result / 预期结果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result / 实际结果
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy confirmation / 隐私确认
+      options:
+        - label: I confirm that all attached data is synthetic or safely redacted.
+          required: true

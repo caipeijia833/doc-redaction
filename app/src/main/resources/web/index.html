@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="session-token" content="__SESSION_TOKEN__">
+  <title data-i18n="app.title">智能文档脱敏系统</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true" data-i18n="brand.mark">密</span>
+        <div><strong data-i18n="brand.name">智能文档脱敏</strong><small data-i18n="brand.stage">本地离线 Alpha</small></div>
+      </div>
+      <nav data-i18n-aria-label="nav.label" aria-label="主导航">
+        <button class="nav-item active" data-view="workspace"><span>01</span><b data-i18n="nav.workspace">新建脱敏</b></button>
+        <button class="nav-item" data-view="history"><span>02</span><b data-i18n="nav.history">历史项目</b></button>
+        <button class="nav-item" data-view="restore"><span>03</span><b data-i18n="nav.restore">还原中心</b></button>
+        <button class="nav-item" data-view="rules"><span>04</span><b data-i18n="nav.rules">规则库</b></button>
+        <button class="nav-item" data-view="settings"><span>05</span><b data-i18n="nav.settings">系统设置</b></button>
+      </nav>
+      <div class="privacy-card">
+        <strong data-i18n="privacy.title">本机处理</strong>
+        <p data-i18n="privacy.body">服务仅监听 127.0.0.1，文件不会主动发送到云端。</p>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">LOCAL DOCUMENT SECURITY</p>
+          <h1 id="page-title" data-i18n="title.workspace">新建脱敏任务</h1>
+        </div>
+        <div class="topbar-actions">
+          <div class="language-switch" role="group" data-i18n-aria-label="language.label" aria-label="界面语言">
+            <button type="button" data-language="zh-CN" lang="zh-CN">中文</button>
+            <button type="button" data-language="en" lang="en">English</button>
+          </div>
+          <div class="status-pill"><i></i><span data-i18n="status.ready">离线引擎已就绪</span></div>
+        </div>
+      </header>
+
+      <section class="view active" id="view-workspace">
+        <div class="notice warning">
+          <strong data-i18n="boundary.title">当前边界</strong>
+          <span data-i18n="boundary.body">支持常见办公文档、图片、MP3/WAV/M4A/FLAC、MP4/MOV/MKV，以及 ZIP、7Z、TAR、TAR.GZ 安全预检。音视频使用本地 ASR、抽帧 OCR、人脸、二维码和中国车牌检测；组件不可用时任务失败关闭。视频默认最长30分钟，短于抽帧间隔的闪现内容仍需人工复核。</span>
+        </div>
+
+        <section class="panel wizard-shell" aria-labelledby="wizard-title">
+          <div class="panel-heading wizard-heading">
+            <div><span class="step" data-i18n="wizard.guided">引导流程</span><h2 id="wizard-title" data-i18n="wizard.title">新建脱敏任务</h2></div>
+            <span class="muted" id="limit-label" data-i18n="config.initialLimit">单文件最大 1 GB，支持多选</span>
+          </div>
+          <ol class="wizard-progress" aria-label="脱敏任务步骤" data-i18n-aria-label="wizard.aria">
+            <li class="active" data-wizard-marker="1"><b>1</b><span data-i18n="wizard.files">选择文件</span></li>
+            <li data-wizard-marker="2"><b>2</b><span data-i18n="wizard.project">项目与模式</span></li>
+            <li data-wizard-marker="3"><b>3</b><span data-i18n="wizard.rules">规则与文件名</span></li>
+            <li data-wizard-marker="4"><b>4</b><span data-i18n="wizard.confirm">确认风险</span></li>
+            <li data-wizard-marker="5"><b>5</b><span data-i18n="wizard.result">处理与下载</span></li>
+          </ol>
+
+          <section class="wizard-pane active" data-wizard-step="1">
+            <div class="wizard-pane-title"><span class="step">01</span><div><h3 data-i18n="upload.title">选择待处理文档</h3><p data-i18n="wizard.filesHelp">先检查格式与大小；压缩包内容会在上传后进行深度安全检查。此步骤不会自动开始处理。</p></div></div>
+            <label class="dropzone" id="dropzone" for="file-input">
+              <input id="file-input" type="file" accept=".docx,.xlsx,.pptx,.pdf,.ofd,.png,.jpg,.jpeg,.bmp,.mp3,.wav,.m4a,.flac,.mp4,.mov,.mkv,.zip,.7z,.tar,.tar.gz,.tgz,.rar" multiple>
+              <span class="upload-icon" aria-hidden="true">＋</span>
+              <strong data-i18n="upload.dropTitle">点击选择或拖放一批文件</strong>
+              <span>DOCX · XLSX · PPTX · PDF · OFD · IMAGE · AUDIO · VIDEO · ZIP · 7Z · TAR · TAR.GZ</span>
+              <small data-i18n="upload.dropNote">任务明文副本在处理结束后清理；可还原模式另存加密原件</small>
+            </label>
+            <div class="selected-file" id="selected-file" hidden>
+              <div class="file-badge" id="file-ext">DOC</div>
+              <div><strong id="file-name"></strong><small id="file-size"></small></div>
+              <button id="clear-file" class="text-button" type="button" data-i18n="upload.clearAll">清空全部</button>
+            </div>
+            <div id="file-preflight-list" class="file-preflight-list"></div>
+            <div id="capacity-estimate" class="capacity-estimate" role="status" aria-live="polite" hidden>
+              <strong id="capacity-estimate-title"></strong><span id="capacity-estimate-detail"></span>
+            </div>
+            <div class="wizard-actions end"><button class="primary-button" id="wizard-next-1" type="button" disabled data-i18n="wizard.nextProject">下一步：项目与模式</button></div>
+          </section>
+
+          <section class="wizard-pane" data-wizard-step="2" hidden>
+            <div class="wizard-pane-title"><span class="step">02</span><div><h3 data-i18n="wizard.projectTitle">设置项目与处理模式</h3><p data-i18n="wizard.projectHelp">同批文件归入同一项目；可还原模式会额外加密保存上传原件。</p></div></div>
+            <label class="field-label" for="project-name" data-i18n="upload.projectName">项目名称</label>
+            <input id="project-name" class="text-input" maxlength="100" value="合成资料验证项目" data-i18n-value="project.default">
+            <div class="mode-grid">
+              <label><span data-i18n="upload.mode">处理模式</span>
+                <select id="processing-mode" class="text-input">
+                  <option value="external_irreversible" data-i18n="mode.irreversible">外发不可逆脱敏（默认）</option>
+                  <option value="reversible_vault" data-i18n="mode.reversible">可还原：加密保存原件</option>
+                </select>
+              </label>
+              <label id="vault-passphrase-field" hidden><span data-i18n="vault.passphrase">项目还原口令</span>
+                <input id="vault-passphrase" class="text-input" type="password" minlength="10" maxlength="256" autocomplete="new-password" data-i18n-placeholder="vault.placeholder" placeholder="至少10个字符；系统不保存口令">
+              </label>
+              <label id="vault-passphrase-confirm-field" hidden><span data-i18n="vault.confirmPassphrase">再次输入还原口令</span>
+                <input id="vault-passphrase-confirm" class="text-input" type="password" minlength="10" maxlength="256" autocomplete="new-password" data-i18n-placeholder="vault.confirmPlaceholder" placeholder="必须与上方口令一致">
+              </label>
+            </div>
+            <div class="notice info compact" id="vault-mode-notice" hidden><strong data-i18n="vault.noticeTitle">原件还原说明</strong><span data-i18n="vault.noticeBody">系统保存加密原件并在还原时校验上传哈希；忘记口令后无法恢复。遮挡或静音后的结果文件本身不能逆向还原。</span></div>
+            <div class="wizard-actions"><button class="secondary-button" id="wizard-back-2" type="button" data-i18n="wizard.back">上一步</button><button class="primary-button" id="wizard-next-2" type="button" data-i18n="wizard.nextRules">下一步：规则与文件名</button></div>
+          </section>
+
+          <section class="wizard-pane" data-wizard-step="3" hidden>
+            <div class="wizard-pane-title"><span class="step">03</span><div><h3 data-i18n="wizard.rulesTitle">选择本任务规则</h3><p data-i18n="wizard.rulesHelp">默认选中当前启用的全部规则分类。黑名单始终参与检测，文件名与正文使用同一规则范围。</p></div></div>
+            <div class="rule-selection-toolbar"><button id="select-all-rule-categories" class="secondary-button" type="button" data-i18n="wizard.selectAll">全选</button><button id="clear-rule-categories" class="secondary-button" type="button" data-i18n="wizard.clearRules">清空</button><span id="rule-count" class="muted">—</span></div>
+            <div id="rule-category-list" class="rule-category-list"></div>
+            <label class="review-option"><input id="require-review" type="checkbox" checked><span><strong data-i18n="review.beforeTitle">处理前人工复核</strong><small data-i18n="review.beforeBody">先显示规则命中项，可逐项取消脱敏；压缩包使用独立的内容清单确认。</small></span></label>
+            <div class="filename-preview-block"><h4 data-i18n="wizard.filenamePreview">文件名脱敏预览</h4><p class="muted" data-i18n="wizard.filenameHelp">仅脱敏文件名主体中的敏感值并保留扩展名；重名会自动追加序号。还原原件恢复原始文件名。</p><div id="filename-preview-list" class="filename-preview-list"></div></div>
+            <div class="wizard-actions"><button class="secondary-button" id="wizard-back-3" type="button" data-i18n="wizard.back">上一步</button><button class="primary-button" id="wizard-next-3" type="button" disabled data-i18n="wizard.nextConfirm">下一步：确认风险</button></div>
+          </section>
+
+          <section class="wizard-pane" data-wizard-step="4" hidden>
+            <div class="wizard-pane-title"><span class="step">04</span><div><h3 data-i18n="wizard.confirmTitle">确认后开始处理</h3><p data-i18n="wizard.confirmHelp">请核对文件、规则、输出文件名和还原策略。上传只经过本机回环地址。</p></div></div>
+            <div id="wizard-confirm-summary" class="wizard-confirm-summary"></div>
+            <div class="confirm-file-block"><h4 data-i18n="wizard.confirmFiles">逐文件处理清单</h4><div id="wizard-confirm-files" class="confirm-file-list"></div></div>
+            <div class="security-summary">
+              <span data-i18n="summary.mode">处理模式</span><strong id="processing-mode-summary" data-i18n="summary.irreversible">不可逆遮盖</strong>
+              <span data-i18n="summary.network">网络依赖</span><strong data-i18n="summary.none">无</strong>
+              <span data-i18n="summary.bind">服务监听</span><strong>127.0.0.1</strong>
+              <span data-i18n="summary.concurrency">并发解析</span><strong data-i18n="summary.workers">默认 1 个，最多 2 个隔离进程</strong>
+            </div>
+            <label class="risk-confirm"><input id="risk-confirm" type="checkbox"><span><strong data-i18n="wizard.riskCheck">我已核对处理范围并确认开始本地脱敏</strong><small data-i18n="wizard.riskHelp">RAR、超限文件或不支持格式必须先从队列移除；压缩包中的未支持文件仍需后续二次确认。</small></span></label>
+            <div class="wizard-actions"><button class="secondary-button" id="wizard-back-4" type="button" data-i18n="wizard.back">上一步</button><button class="primary-button" id="start-button" type="button" disabled data-i18n="upload.start">开始批量脱敏</button></div>
+          </section>
+
+          <section class="wizard-pane" data-wizard-step="5" hidden>
+            <div class="wizard-pane-title"><span class="step">05</span><div><h3 data-i18n="wizard.resultTitle">处理进度与结果</h3><p data-i18n="wizard.resultHelp">任务完成后可下载脱敏结果；需要复核或确认的任务会显示在下方工作区。</p></div></div>
+            <div class="progress-card" id="progress-card">
+              <div class="progress-copy"><strong id="progress-title">正在上传</strong><span id="progress-percent">0%</span></div>
+              <div class="progress-track" id="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progress-bar"></i></div>
+              <p id="progress-detail">准备本地处理任务…</p>
+            </div>
+            <div class="wizard-actions"><button class="secondary-button" id="wizard-new-task" type="button" data-i18n="wizard.newTask">新建另一任务</button><button class="primary-button" type="button" data-view-target="history" data-i18n="wizard.openHistory">查看历史与下载</button></div>
+          </section>
+        </section>
+
+        <section class="panel archive-review" id="archive-review" hidden>
+          <div class="panel-heading">
+            <div><span class="step" data-i18n="archive.confirmStep">确认</span><h2 data-i18n="archive.title">压缩包内容与处理策略</h2></div>
+            <span class="muted" data-i18n="archive.defaultExclude">未支持文件默认排除</span>
+          </div>
+          <div class="notice danger compact">
+            <strong data-i18n="archive.warningTitle">安全提示</strong>
+            <span data-i18n="archive.warningBody">原样保留意味着该文件没有经过敏感信息检查；脚本、可执行文件和不安全路径始终排除。</span>
+          </div>
+          <div id="archive-review-list"></div>
+        </section>
+
+        <section class="panel review-workbench" id="review-workbench" hidden>
+          <div class="panel-heading">
+            <div><span class="step" data-i18n="review.step">复核</span><h2 data-i18n="review.title">敏感项人工复核</h2></div>
+            <span class="muted" data-i18n="review.uncheckHint">取消勾选即加入本任务临时白名单</span>
+          </div>
+          <div class="notice info compact"><strong data-i18n="review.previewTitle">本地原文预览</strong><span data-i18n="review.previewBody">复核内容只通过127.0.0.1会话显示；任务处理完成后，任务明文副本会被清理。</span></div>
+          <div id="review-workbench-list"></div>
+        </section>
+
+        <section class="panel recent-panel">
+          <div class="panel-heading"><div><span class="step" data-i18n="recent.step">最近</span><h2 data-i18n="recent.title">处理结果</h2></div><button class="text-button" data-view-target="history" data-i18n="recent.all">查看全部</button></div>
+          <div id="recent-jobs" class="empty-state" data-i18n="recent.empty">尚无任务。选择一份合成文档开始验证。</div>
+        </section>
+      </section>
+
+      <section class="view" id="view-history">
+        <section class="panel">
+          <div class="panel-heading"><div><span class="step" data-i18n="history.step">记录</span><h2 data-i18n="history.title">历史项目</h2></div><button class="secondary-button" id="refresh-history" data-i18n="history.refresh">刷新</button></div>
+          <div class="history-toolbar">
+            <label><span data-i18n="history.searchLabel">搜索项目或文件</span><input id="history-search" class="text-input" type="search" maxlength="100" data-i18n-placeholder="history.searchPlaceholder" placeholder="输入名称、状态或文件名"></label>
+            <span id="history-summary" class="muted"></span>
+          </div>
+          <div id="history-projects" class="project-grid"></div>
+          <h3 class="history-files-title" data-i18n="history.fileDetails">项目文件明细</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th data-i18n="table.project">项目</th><th data-i18n="table.file">文件</th><th data-i18n="table.status">状态</th><th data-i18n="table.size">大小</th><th data-i18n="table.matches">命中</th><th data-i18n="table.created">创建时间</th><th data-i18n="table.actions">操作</th></tr></thead>
+              <tbody id="history-body"></tbody>
+            </table>
+            <div id="history-empty" class="empty-state" data-i18n="history.empty">尚无历史项目。</div>
+          </div>
+          <div class="history-pagination">
+            <button class="secondary-button" id="history-prev" type="button" data-i18n="history.previous">上一页</button>
+            <span id="history-page" class="muted" data-i18n="history.initialPage">第 1 页</span>
+            <button class="secondary-button" id="history-next" type="button" data-i18n="history.next">下一页</button>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="view-restore">
+        <div class="notice warning">
+          <strong data-i18n="restore.boundaryTitle">还原边界</strong>
+          <span data-i18n="restore.boundaryBody">只有上传时选择“可还原：加密保存原件”的任务才能恢复上传原件。脱敏结果本身不可逆，忘记口令也无法恢复。</span>
+        </div>
+        <section class="panel">
+          <div class="panel-heading">
+            <div><span class="step" data-i18n="restore.step">原件库</span><h2 data-i18n="restore.title">加密原件还原中心</h2></div>
+            <button class="secondary-button" id="refresh-restore" type="button" data-i18n="restore.refresh">刷新</button>
+          </div>
+          <div class="restore-metrics" aria-live="polite">
+            <article><span data-i18n="restore.metricAll">全部任务</span><strong id="restore-total-count">0</strong></article>
+            <article><span data-i18n="restore.metricAvailable">可还原</span><strong id="restore-available-count">0</strong></article>
+            <article><span data-i18n="restore.metricUnavailable">不可还原</span><strong id="restore-unavailable-count">0</strong></article>
+            <article><span data-i18n="restore.metricOperations">累计还原</span><strong id="restore-operation-count">0</strong></article>
+          </div>
+          <div class="management-toolbar">
+            <label><span data-i18n="restore.searchLabel">搜索项目或文件</span><input id="restore-search" class="text-input" type="search" maxlength="100" data-i18n-placeholder="restore.searchPlaceholder" placeholder="输入项目名或文件名"></label>
+            <label><span data-i18n="restore.filterLabel">还原状态</span><select id="restore-filter" class="text-input"><option value="all" data-i18n="restore.filterAll">全部</option><option value="available" data-i18n="restore.filterAvailable">仅可还原</option><option value="unavailable" data-i18n="restore.filterUnavailable">仅不可还原</option></select></label>
+            <label><span data-i18n="common.pageSize">每页数量</span><select id="restore-page-size" class="text-input"><option value="20">20</option><option value="50">50</option><option value="100">100</option></select></label>
+          </div>
+          <div class="restore-bulk-actions">
+            <button id="restore-select-page" class="secondary-button" type="button" data-i18n="restore.selectPage">选择本页可还原文件</button>
+            <button id="restore-clear-selection" class="text-button" type="button" data-i18n="restore.clearSelection">清空选择</button>
+            <span id="restore-selection-summary" class="muted" data-i18n="restore.noneSelected">尚未选择文件</span>
+            <button id="restore-selected" class="primary-button compact-button" type="button" disabled data-i18n="restore.selectedAction">批量还原所选文件</button>
+          </div>
+          <div class="table-wrap">
+            <table class="restore-table">
+              <thead><tr><th data-i18n="table.project">项目</th><th data-i18n="table.file">文件</th><th data-i18n="restore.protection">原件保护</th><th data-i18n="table.status">状态</th><th data-i18n="restore.times">还原次数</th><th data-i18n="restore.lastTime">最后还原</th><th data-i18n="table.actions">操作</th></tr></thead>
+              <tbody id="restore-body"></tbody>
+            </table>
+            <div id="restore-empty" class="empty-state" data-i18n="restore.empty">没有符合条件的任务。</div>
+          </div>
+          <div class="history-pagination">
+            <button class="secondary-button" id="restore-prev" type="button" data-i18n="history.previous">上一页</button>
+            <span id="restore-page" class="muted" data-i18n="history.initialPage">第 1 页</span>
+            <button class="secondary-button" id="restore-next" type="button" data-i18n="history.next">下一页</button>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="view-rules">
+        <div class="notice info"><strong data-i18n="rules.noticeTitle">规则说明</strong><span data-i18n="rules.noticeBody">高确定性号码包含校验算法；姓名、地址、单位等为上下文规则，正式使用前仍需人工复核。</span></div>
+        <section class="panel rule-library-shell">
+          <div class="panel-heading"><div><span class="step" data-i18n="rules.step">规则</span><h2 data-i18n="rules.managementTitle">规则库管理</h2></div><span class="muted" id="rules-total"></span></div>
+          <div class="rule-tabs" role="tablist" data-i18n-aria-label="rules.tabsLabel" aria-label="规则库分类">
+            <button class="rule-tab active" type="button" role="tab" aria-selected="true" data-rule-tab="built-in" data-i18n="rules.tabBuiltIn">内置规则</button>
+            <button class="rule-tab" type="button" role="tab" aria-selected="false" data-rule-tab="custom" data-i18n="rules.tabCustom">自定义规则</button>
+            <button class="rule-tab" type="button" role="tab" aria-selected="false" data-rule-tab="blacklist" data-i18n="rules.tabBlacklist">黑名单</button>
+            <button class="rule-tab" type="button" role="tab" aria-selected="false" data-rule-tab="whitelist" data-i18n="rules.tabWhitelist">白名单</button>
+            <button class="rule-tab" type="button" role="tab" aria-selected="false" data-rule-tab="history" data-i18n="rules.tabHistory">版本历史</button>
+          </div>
+
+          <section class="rule-tab-panel active" id="rule-panel-built-in" role="tabpanel">
+            <div class="management-toolbar">
+              <label><span data-i18n="rules.search">搜索规则</span><input id="built-in-rule-search" class="text-input" type="search" maxlength="100" data-i18n-placeholder="rules.searchPlaceholder" placeholder="输入名称、ID、分类或表达式"></label>
+              <label><span data-i18n="rules.statusFilter">启用状态</span><select id="built-in-rule-status" class="text-input"><option value="all" data-i18n="rules.statusAll">全部</option><option value="enabled" data-i18n="rules.enabled">已启用</option><option value="disabled" data-i18n="rules.disabled">已停用</option></select></label>
+              <label><span data-i18n="common.pageSize">每页数量</span><select id="built-in-rule-page-size" class="text-input"><option value="20">20</option><option value="50">50</option><option value="100">100</option></select></label>
+            </div>
+            <div id="built-in-rules-grid" class="rules-grid"></div>
+            <div id="built-in-rules-empty" class="empty-state" data-i18n="rules.empty">没有符合条件的规则。</div>
+            <div class="history-pagination"><button class="secondary-button" id="built-in-rule-prev" type="button" data-i18n="history.previous">上一页</button><span id="built-in-rule-page" class="muted"></span><button class="secondary-button" id="built-in-rule-next" type="button" data-i18n="history.next">下一页</button></div>
+          </section>
+
+          <section class="rule-tab-panel" id="rule-panel-custom" role="tabpanel">
+            <div class="management-toolbar">
+              <label><span data-i18n="rules.search">搜索规则</span><input id="custom-rule-search" class="text-input" type="search" maxlength="100" data-i18n-placeholder="rules.searchPlaceholder" placeholder="输入名称、ID、分类或表达式"></label>
+              <label><span data-i18n="common.pageSize">每页数量</span><select id="custom-rule-page-size" class="text-input"><option value="20">20</option><option value="50">50</option><option value="100">100</option></select></label>
+              <div class="toolbar-actions"><button id="export-custom-rules" class="secondary-button" type="button" data-i18n="rules.export">导出自定义规则</button><label class="secondary-button file-button"><span data-i18n="rules.import">导入自定义规则</span><input id="import-custom-rules" type="file" accept="application/json,.json"></label></div>
+            </div>
+            <div id="custom-rules-grid" class="rules-grid"></div>
+            <div id="custom-rules-empty" class="empty-state" data-i18n="rules.customEmpty">尚未新增自定义规则。</div>
+            <div class="history-pagination"><button class="secondary-button" id="custom-rule-prev" type="button" data-i18n="history.previous">上一页</button><span id="custom-rule-page" class="muted"></span><button class="secondary-button" id="custom-rule-next" type="button" data-i18n="history.next">下一页</button></div>
+            <div class="custom-rule-editor">
+              <div class="panel-heading"><div><span class="step" data-i18n="rules.extend">扩展</span><h3 id="custom-rule-heading" data-i18n="rules.customTitle">新增或编辑自定义正则规则</h3></div></div>
+              <div class="custom-rule-form">
+                <label><span data-i18n="rules.ruleId">规则ID</span><input id="custom-rule-id" class="text-input" maxlength="60" data-i18n-placeholder="rules.ruleIdPlaceholder" placeholder="例如 INTERNAL_CASE_CODE"></label>
+                <label><span data-i18n="rules.ruleName">规则名称</span><input id="custom-rule-label" class="text-input" maxlength="80" data-i18n-placeholder="rules.ruleNamePlaceholder" placeholder="例如 内部案件编号"></label>
+                <label><span data-i18n="rules.category">分类</span><input id="custom-rule-category" class="text-input" maxlength="40" value="custom" data-i18n-placeholder="rules.categoryPlaceholder" placeholder="例如 legal_case"></label>
+                <label><span data-i18n="rules.priority">优先级</span><input id="custom-rule-priority" class="text-input" type="number" min="1" max="999" value="50"></label>
+                <label class="wide"><span data-i18n="rules.regex">正则表达式</span><textarea id="custom-rule-regex" class="list-input" rows="3" maxlength="500" data-i18n-placeholder="rules.regexPlaceholder" placeholder="例如：CASE-[0-9]{8}"></textarea></label>
+                <label class="wide"><span data-i18n="rules.testSample">保存前测试样例</span><textarea id="custom-rule-sample" class="list-input" rows="3" maxlength="20000" data-i18n-placeholder="rules.testSamplePlaceholder" placeholder="粘贴不含真实敏感信息的合成样例"></textarea></label>
+              </div>
+              <div class="rule-workbench-actions"><button id="test-custom-rule" class="secondary-button" type="button" data-i18n="rules.test">测试匹配</button><button id="add-custom-rule" class="primary-button compact-button" type="button" data-i18n="rules.add">验证并添加规则</button><button id="cancel-edit-rule" class="secondary-button" type="button" hidden data-i18n="rules.cancelEdit">取消编辑</button></div>
+              <div id="custom-rule-test-result" class="rule-test-result muted" data-i18n="rules.testIdle">尚未执行测试。</div>
+            </div>
+          </section>
+
+          <section class="rule-tab-panel" id="rule-panel-blacklist" role="tabpanel">
+            <div class="notice warning compact"><strong data-i18n="rules.blacklist">黑名单</strong><span data-i18n="rules.blacklistHelp">每行一项。黑名单优先级最高，在全部支持文档中强制脱敏。</span></div>
+            <div class="list-add-row"><input id="blacklist-new-value" class="text-input" maxlength="500" data-i18n-placeholder="rules.listNewPlaceholder" placeholder="输入一个新值"><button id="add-blacklist-value" class="primary-button compact-button" type="button" data-i18n="rules.addListValue">新增</button></div>
+            <div class="management-toolbar"><label><span data-i18n="rules.searchList">搜索名单</span><input id="blacklist-search" class="text-input" type="search" maxlength="100"></label><label><span data-i18n="common.pageSize">每页数量</span><select id="blacklist-page-size" class="text-input"><option value="20">20</option><option value="50">50</option><option value="100">100</option></select></label></div>
+            <div id="blacklist-table" class="managed-list"></div><div id="blacklist-empty" class="empty-state" data-i18n="rules.listEmpty">名单为空。</div>
+            <div class="history-pagination"><button class="secondary-button" id="blacklist-prev" type="button" data-i18n="history.previous">上一页</button><span id="blacklist-page" class="muted"></span><button class="secondary-button" id="blacklist-next" type="button" data-i18n="history.next">下一页</button></div>
+            <details class="bulk-editor"><summary data-i18n="rules.bulkEdit">批量粘贴或替换</summary><textarea id="blacklist-input" class="list-input" rows="8" data-i18n-placeholder="rules.blacklistPlaceholder" placeholder="例如：特定当事人姓名&#10;内部项目代号"></textarea><button id="save-blacklist" class="secondary-button" type="button" data-i18n="rules.saveBlacklist">保存黑名单</button></details>
+          </section>
+
+          <section class="rule-tab-panel" id="rule-panel-whitelist" role="tabpanel">
+            <div class="notice warning compact"><strong data-i18n="rules.whitelist">白名单</strong><span data-i18n="rules.whitelistHelp">每行一项。与识别值完全一致时不脱敏，应谨慎使用。</span></div>
+            <div class="list-add-row"><input id="whitelist-new-value" class="text-input" maxlength="500" data-i18n-placeholder="rules.listNewPlaceholder" placeholder="输入一个新值"><button id="add-whitelist-value" class="primary-button compact-button" type="button" data-i18n="rules.addListValue">新增</button></div>
+            <div class="management-toolbar"><label><span data-i18n="rules.searchList">搜索名单</span><input id="whitelist-search" class="text-input" type="search" maxlength="100"></label><label><span data-i18n="common.pageSize">每页数量</span><select id="whitelist-page-size" class="text-input"><option value="20">20</option><option value="50">50</option><option value="100">100</option></select></label></div>
+            <div id="whitelist-table" class="managed-list"></div><div id="whitelist-empty" class="empty-state" data-i18n="rules.listEmpty">名单为空。</div>
+            <div class="history-pagination"><button class="secondary-button" id="whitelist-prev" type="button" data-i18n="history.previous">上一页</button><span id="whitelist-page" class="muted"></span><button class="secondary-button" id="whitelist-next" type="button" data-i18n="history.next">下一页</button></div>
+            <details class="bulk-editor"><summary data-i18n="rules.bulkEdit">批量粘贴或替换</summary><textarea id="whitelist-input" class="list-input" rows="8" data-i18n-placeholder="rules.whitelistPlaceholder" placeholder="例如：公开机构名称"></textarea><button id="save-whitelist" class="secondary-button" type="button" data-i18n="rules.saveWhitelist">保存白名单</button></details>
+          </section>
+
+          <section class="rule-tab-panel" id="rule-panel-history" role="tabpanel">
+            <div class="notice info compact"><strong data-i18n="rules.history">历史版本</strong><span data-i18n="rules.historyHelp">每次规则、黑名单或白名单变更都会生成本地版本，可回滚但不会删除现有历史。</span></div>
+            <div id="rule-history-table" class="version-list"></div>
+            <div id="rule-history-empty" class="empty-state" data-i18n="rules.noHistory">暂无历史</div>
+          </section>
+        </section>
+      </section>
+
+      <section class="view" id="view-settings">
+        <section class="panel settings-panel">
+          <div class="panel-heading"><div><span class="step" data-i18n="settings.readOnly">只读</span><h2 data-i18n="settings.title">当前系统设置</h2></div></div>
+          <dl>
+            <div><dt data-i18n="settings.deployMode">部署模式</dt><dd data-i18n="settings.deployValue">本地离线单机版</dd></div>
+            <div><dt data-i18n="settings.fileLimit">文件上限</dt><dd id="settings-limit">1 GB</dd></div>
+            <div><dt data-i18n="settings.queue">持久队列</dt><dd id="settings-queue">最多10000项</dd></div>
+            <div><dt data-i18n="settings.storage">本地数据配额</dt><dd id="settings-storage" data-i18n="common.loading">读取中</dd></div>
+            <div><dt data-i18n="settings.environment">环境预检</dt><dd id="settings-environment" data-i18n="common.loading">读取中</dd></div>
+            <div><dt data-i18n="settings.worker">解析隔离</dt><dd id="settings-worker" data-i18n="common.loading">读取中</dd></div>
+            <div><dt data-i18n="settings.ocr">离线OCR</dt><dd id="settings-ocr" data-i18n="common.loading">读取中</dd></div>
+            <div><dt data-i18n="settings.media">离线音视频</dt><dd id="settings-media" data-i18n="common.loading">读取中</dd></div>
+            <div><dt data-i18n="settings.formats">支持处理格式</dt><dd id="settings-formats">DOCX / XLSX / PPTX / PDF / OFD / PNG / JPG / BMP / MP3 / WAV / M4A / FLAC / MP4 / MOV / MKV</dd></div>
+            <div><dt data-i18n="settings.archives">压缩包导入</dt><dd id="settings-archives">ZIP / 7Z / TAR / TAR.GZ；RAR仅识别反馈</dd></div>
+            <div><dt data-i18n="settings.originalPolicy">原件策略</dt><dd data-i18n="settings.originalPolicyValue">不可逆模式处理后删除任务明文副本；可还原模式使用AES-GCM加密保存</dd></div>
+            <div><dt data-i18n="settings.pdfPolicy">PDF策略</dt><dd data-i18n="settings.pdfPolicyValue">144 DPI 栅格化，重新生成无文本层 PDF</dd></div>
+            <div><dt data-i18n="settings.model">多模态模型</dt><dd id="settings-vlm">—</dd></div>
+          </dl>
+        </section>
+      </section>
+    </main>
+  </div>
+  <dialog id="restore-dialog" class="restore-dialog" aria-labelledby="restore-dialog-title">
+    <form method="dialog">
+      <div class="dialog-heading"><div><span class="step" data-i18n="restore.dialogStep">安全操作</span><h2 id="restore-dialog-title" data-i18n="restore.dialogTitle">还原加密原件</h2></div><button id="restore-dialog-close" class="dialog-close" type="button" value="cancel" data-i18n-aria-label="common.close" aria-label="关闭">×</button></div>
+      <p id="restore-dialog-file" class="restore-file-name"></p>
+      <div class="notice warning compact"><strong data-i18n="restore.dialogWarningTitle">本机解密</strong><span data-i18n="restore.dialogWarningBody">口令只提交到127.0.0.1本地服务且不会保存；成功后会校验原文件SHA-256并记录还原次数。</span></div>
+      <label class="dialog-field"><span data-i18n="restore.passphraseLabel">还原口令</span><input id="restore-dialog-passphrase" class="text-input" type="password" minlength="10" maxlength="256" autocomplete="current-password" data-i18n-placeholder="restore.passphrasePlaceholder" placeholder="输入上传时设置的口令"></label>
+      <label class="restore-confirm-option"><input id="restore-dialog-confirm" type="checkbox"><span data-i18n="restore.confirmCheckbox">我确认要在本机解密并下载上传原件</span></label>
+      <div id="restore-dialog-error" class="dialog-error" role="alert"></div>
+      <div class="dialog-actions"><button id="restore-dialog-cancel" class="secondary-button" value="cancel" type="button" data-i18n="common.cancel">取消</button><button id="restore-dialog-submit" class="primary-button compact-button" value="default" type="button" data-i18n="restore.submit">还原并下载</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/assets/i18n.js" defer></script>
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>

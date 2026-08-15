@@ -1,0 +1,34 @@
+{
+  "handoff_version": "yichen-content-handoff/v1",
+  "producer_skill": "yichen-content-archive",
+  "operation": "content_archive",
+  "scope": {
+    "platforms": ["web"],
+    "input_kind": "confirmed_candidates",
+    "discovery_performed": false
+  },
+  "authorization": {
+    "private_read_authorized_this_turn": null,
+    "download_authorized_this_turn": true,
+    "authorization_not_transferable": true
+  },
+  "artifacts": [
+    {
+      "kind": "archive_manifest",
+      "path": "audit/source-archives/20260814-cn-division-2.7.0/archive-manifest.jsonl",
+      "count": 5
+    }
+  ],
+  "counts": {
+    "input": 5,
+    "success": 5,
+    "failed": 0,
+    "skipped": 0,
+    "unsupported": 0
+  },
+  "failures": [],
+  "next_step": {
+    "action": "none",
+    "requires_explicit_user_request": true
+  }
+}

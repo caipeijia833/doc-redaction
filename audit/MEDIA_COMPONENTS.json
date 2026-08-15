@@ -1,0 +1,68 @@
+{
+  "generatedAt": "2026-08-14T00:00:00Z",
+  "policy": {
+    "networkAtRuntime": false,
+    "gpuRequired": false,
+    "ffmpegMustContain": ["--enable-shared"],
+    "ffmpegMustNotContain": ["--enable-gpl", "--enable-nonfree"],
+    "note": "Windows分发仅复制共享运行所需的ffmpeg/ffprobe、FFmpeg共享DLL、whisper-cli及其ggml/whisper共享DLL；不复制ffplay、server、benchmark或训练工具。"
+  },
+  "components": [
+    {
+      "name": "OpenCV official Java runtime Windows x64",
+      "version": "4.13.0",
+      "archive": "opencv-4.13.0-windows.exe",
+      "archiveSha256": "f0e98c302464d6860777a7015065e11b9b271b5394e6ba92663f0cf1fc303f2c",
+      "jar": "opencv-4130.jar",
+      "jarSha256": "00e2c856933993d948910f77344ac99ce38b0f875af2866a164f8fff82e9fb5f",
+      "nativeLibrary": "opencv_java4130.dll",
+      "nativeLibrarySha256": "0a3fcf83e381ce5f49e155ff10e5b3a20dfc7c6590dbfb2c6c5f3dd8b684ab6c",
+      "source": "https://github.com/opencv/opencv/releases/download/4.13.0/opencv-4.13.0-windows.exe",
+      "license": "Apache-2.0; official third-party notices are packaged under media/opencv/licenses",
+      "scope": "Java API classes are embedded in the application Fat JAR; the official JNI DLL is loaded from a fixed local path and is never extracted at runtime"
+    },
+    {
+      "name": "FFmpeg BtbN win64 LGPL shared",
+      "reportedVersion": "n8.1.2-34-g9b6c8969e0-20260812",
+      "buildScriptsCommit": "2a3249ec58228c661e7ff8fdc9ea997b18aa912b",
+      "archive": "ffmpeg-n8.1-latest-win64-lgpl-shared-8.1.zip",
+      "archiveSha256": "c0692b85d56f2995656406425c095700117dfd7a84f8ca5af75ebf92ed08b8a9",
+      "source": "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n8.1-latest-win64-lgpl-shared-8.1.zip",
+      "upstreamSource": "https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/9b6c8969e0",
+      "license": "LGPL-3.0-or-later for this --enable-version3, non-GPL build; see packaged media/ffmpeg/LICENSE-LGPL-3.0.txt"
+    },
+    {
+      "name": "whisper.cpp Windows x64 CPU",
+      "version": "v1.9.2",
+      "tagCommit": "306c88f4d1286aec1bf96e544632897886af5501",
+      "archive": "whisper-bin-x64.zip",
+      "archiveSha256": "49dcc16de826f20bd53d44f947a1ae49dfa81f86cad67a64d80820cb192d674a",
+      "source": "https://github.com/ggml-org/whisper.cpp/releases/download/v1.9.2/whisper-bin-x64.zip",
+      "license": "MIT"
+    },
+    {
+      "name": "Whisper base multilingual q5_1 model",
+      "file": "ggml-base-q5_1.bin",
+      "sha256": "422f1ae452ade6f30a004d7e5c6a43195e4433bc370bf23fac9cc591f01a8898",
+      "source": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base-q5_1.bin",
+      "license": "MIT, inherited from OpenAI Whisper model release"
+    },
+    {
+      "name": "OpenCV Zoo YuNet face detector",
+      "repositoryCommit": "47534e27c9851bb1128ccc0102f1145e27f23f98",
+      "file": "face_detection_yunet_2023mar.onnx",
+      "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+      "source": "https://github.com/opencv/opencv_zoo/raw/47534e27c9851bb1128ccc0102f1145e27f23f98/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+      "license": "MIT"
+    },
+    {
+      "name": "OpenCV Zoo LPD YuNet Chinese license plate detector",
+      "repositoryCommit": "47534e27c9851bb1128ccc0102f1145e27f23f98",
+      "file": "license_plate_detection_lpd_yunet_2023mar.onnx",
+      "sha256": "6d4978a7b6d25514d5e24811b82bfb511d166bdd8ca3b03aa63c1623d4d039c7",
+      "source": "https://github.com/opencv/opencv_zoo/raw/47534e27c9851bb1128ccc0102f1145e27f23f98/models/license_plate_detection_yunet/license_plate_detection_lpd_yunet_2023mar.onnx",
+      "license": "Apache-2.0",
+      "scope": "Chinese license plates; other-country plate recognition remains unverified"
+    }
+  ]
+}

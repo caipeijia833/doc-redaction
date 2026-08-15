@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-11T19:34:07+08:00",
+  "policy": {
+    "execution_allowed": false,
+    "dependency_installation_allowed": false,
+    "purpose": "read-only upstream source audit"
+  },
+  "repositories": [
+    {
+      "name": "presidio",
+      "remote": "https://github.com/microsoft/presidio.git",
+      "tag": "2.2.364",
+      "commit": "779dbd286d5ef4d1fbe2514275fb1bce358f2417",
+      "tree": "faa34e3cfd7b00ab1e99b570ac16333488b4f9a8",
+      "license_file": "LICENSE",
+      "license_sha256": "8A165B6B3061CC297B40B8784BE053FA0915DABA2A93B394BD8E6401C0428EC1",
+      "decision": "conditional-use"
+    },
+    {
+      "name": "poi",
+      "remote": "https://github.com/apache/poi.git",
+      "tag": "REL_5_5_1",
+      "commit": "094968cfc3d48224db08f0b7f0a6fc341b035114",
+      "tree": "87a0aa4b3294e1763fab99746c37cde4792e6dd1",
+      "license_file": "legal/LICENSE",
+      "license_sha256": "254980EDA6BF81FFA7C548BAF6407EFC7F86A110D7325AA7C2FF3644EEAA72A3",
+      "decision": "approved-for-poc"
+    },
+    {
+      "name": "pdfbox",
+      "remote": "https://github.com/apache/pdfbox.git",
+      "tag": "3.0.8",
+      "commit": "9286e47d89d6877005c9d2d0f2fd38793a62519a",
+      "tree": "b8f3224c7a9a709ce712468c190d5f452030acee",
+      "license_file": "LICENSE.txt",
+      "license_sha256": "7A98F7F7B9BBD6F63D071AE56C738AEF4BEDC1DCEB2D540BB14CA47A1EFBB324",
+      "decision": "approved-for-poc"
+    },
+    {
+      "name": "qpdf",
+      "remote": "https://github.com/qpdf/qpdf.git",
+      "tag": "v12.4.0",
+      "commit": "babad179ce5db9a21635c8d1ac17baa59637eada",
+      "tree": "72f518093ba2aa037a5d4d46b8ba9e51551ad451",
+      "license_file": "LICENSE.txt",
+      "license_sha256": "3DDF9BE5C28FE27DAD143A5DC76EEA25222AD1DD68934A047064E56ED2FA40C5",
+      "decision": "approved-for-poc"
+    },
+    {
+      "name": "ofdrw",
+      "remote": "https://github.com/ofdrw/ofdrw.git",
+      "tag": "2.4.0",
+      "commit": "7459e35082170061efa6b399a6518dbc219f08ac",
+      "tree": "cb1a826366dfb1b337683c40d16c50ddf838842d",
+      "license_file": "LICENSE",
+      "license_sha256": "FC9CDB0AFAC308569878635DDC828A01099C37FFE96596B4962E4077FF9C2F1E",
+      "decision": "module-whitelist-only"
+    },
+    {
+      "name": "rapidocr",
+      "remote": "https://github.com/RapidAI/RapidOCR.git",
+      "tag": "v3.9.2",
+      "commit": "095232a4c94f7f0e6600ba5bba1177010ad696d4",
+      "tree": "5eeb0faffb2d4a3e7a4e9c7ffaceecec54131415",
+      "license_file": "LICENSE",
+      "license_sha256": "7125666E36CB851720619DCF28632C46DCC02A4B9B88F2DF1EA43FDB00CCBCE3",
+      "decision": "conditional-use"
+    },
+    {
+      "name": "jpdfium",
+      "remote": "https://github.com/Stirling-Tools/JPDFium.git",
+      "tag": "v1.0.4",
+      "commit": "5864069ca835d041715d88e71dcb108b95a86d76",
+      "tree": "227fb0e5984717627e154bb166e370e5040f5556",
+      "license_file": "LICENSE",
+      "license_sha256": "B3839720CA4BB82BCC3FDFDE00F64F72A688DA8D712647DAE15A59E09343C51B",
+      "decision": "research-only"
+    },
+    {
+      "name": "rapidocr-onnx-jvm",
+      "remote": "https://github.com/RapidAI/RapidOcrOnnxJvm.git",
+      "tag": null,
+      "commit": "09e44e21fa5e2067c7381ab5cbfae68c7a342e90",
+      "tree": "0eba31e4e0b05ba4665b71738e055d2f96e1c7e3",
+      "license_file": "LICENSE",
+      "license_sha256": "1EB85FC97224598DAD1852B5D6483BBCF0AA8608790DCC657A5A2A761AE9C8C6",
+      "decision": "rejected-for-mvp"
+    }
+  ]
+}

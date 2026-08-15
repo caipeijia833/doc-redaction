@@ -1,0 +1,174 @@
+{
+  "version": "0.1.0-poc",
+  "dataSchemaVersion": 1,
+  "releaseStage": "controlled-single-machine-offline-pilot-candidate",
+  "productionReady": false,
+  "builtAt": "2026-08-14",
+  "platform": "windows-x64",
+  "runtime": "Temurin OpenJDK 21.0.12+8 LTS",
+  "gradle": "8.14.3",
+  "tests": {
+    "suites": 33,
+    "tests": 107,
+    "deterministicTask": {
+      "tests": 99,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "nativeIntegrationTask": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "skippedReason": "The current Windows account cannot create symbolic links; the no-follow implementation remains covered by structural checks."
+  },
+  "artifacts": [
+    {
+      "path": "app/build/libs/doc-redaction-poc-0.1.0-poc-all.jar",
+      "bytes": 43033153,
+      "sha256": "feb75d73d1101506e0782164fbec5374cef9aeb83c154f59309f845433a59ad8"
+    },
+    {
+      "path": "app/build/libs/doc-redaction-ofd-worker-0.1.0-poc.jar",
+      "bytes": 17067,
+      "sha256": "82b91c1ab995b284df0b34ca026dbcb7775c636348ffcb41c6db657604e4ac42"
+    },
+    {
+      "path": "app/build/reports/cyclonedx-direct/bom.json",
+      "bytes": 909832,
+      "sha256": "45cf1a2bf35d6f30161a09ad7422a1794a2ff7183c8a797eb680c81f5b5eb61b"
+    }
+  ],
+  "packageManifest": {
+    "path": null,
+    "filesChecked": 0,
+    "failures": null,
+    "verified": false,
+    "note": "The complete Windows offline package must be regenerated and reaccepted after the Java namespace migration. Previous package hashes are intentionally not presented as current artifacts."
+  },
+  "sbom": {
+    "path": "app/build/reports/cyclonedx-direct/bom.json",
+    "format": "CycloneDX JSON 1.6",
+    "components": 67,
+    "scope": "Java runtime dependencies; root component type application and namespace io.github.caipeijia833.docredaction",
+    "itextOrAgplHits": 0
+  },
+  "securityGate": {
+    "status": "passed",
+    "report": "audit/results/security-gate-latest.json",
+    "sourceSentToExternalScanner": false,
+    "gitleaks": "8.30.0",
+    "osvScanner": "2.4.0",
+    "osvDatabaseMode": "offline Maven database snapshot; latest tracked gate used no network",
+    "checks": [
+      "secret scan",
+      "offline dependency vulnerability scan",
+      "forbidden dependency policy",
+      "official OpenCV API policy",
+      "official OpenCV native SHA-256"
+    ]
+  },
+  "sourceRepositoryPreparation": {
+    "gradleWrapper": "8.14.3 with distribution SHA-256 verification",
+    "cleanBuild": "passed locally after the namespace migration with the pinned Gradle 8.14.3 and Temurin 21 toolchain; deterministic and native integration tasks both passed",
+    "githubWorkflowsPrepared": [
+      "Windows 2025 plus macOS 15 Apple Silicon and Intel hosted deterministic builds; macOS 13 requires separate real-machine/VM acceptance",
+      "Gradle Wrapper validation",
+      "CodeQL",
+      "dependency review"
+    ],
+    "githubExecutionStatus": "not executed; the public repository is reachable but has no refs, while local Git is initialized on main with origin configured and no commit or push",
+    "stableJavaNamespace": "io.github.caipeijia833.docredaction"
+  },
+  "binaryReleasePublication": {
+    "allowed": false,
+    "reason": "FFmpeg corresponding-source closure is incomplete for optional statically linked LGPL-covered dependencies in the selected BtbN build.",
+    "gate": "packaging/FFMPEG_SOURCE_COMPLIANCE.md",
+    "sourceRepositoryPublicationAffected": false,
+    "staleReleaseAssetsMovedTo": "release-assets/superseded-v0.1.0-poc-before-source-compliance-gate"
+  },
+  "windowsPackageAcceptance": {
+    "status": "requires-rebuild-after-namespace-migration",
+    "verifiedForCurrentSource": false,
+    "previousEvidence": "dist/doc-redaction-poc-windows-x64/data/diagnostics/environment-report.json",
+    "script": "audit/package-smoke-windows.ps1",
+    "note": "The prior package acceptance predates the io.github.caipeijia833.docredaction migration and must not be treated as current until packaging and smoke acceptance are rerun."
+  },
+  "nativeComponents": {
+    "tesseract": "5.5.2 static MSVC runtime; chi_sim, eng, osd",
+    "opencv": "official 4.13.0 Java JNI; DLL sha256 0a3fcf83e381ce5f49e155ff10e5b3a20dfc7c6590dbfb2c6c5f3dd8b684ab6c",
+    "ffmpeg": "n8.1.2-34-g9b6c8969e0-20260812 LGPL shared; GPL and nonfree rejected",
+    "whisperCpp": "1.9.2",
+    "vlm": "Qwen3-VL-2B-Instruct Q4_K_M with llama.cpp b10405; CPU fallback"
+  },
+  "ruleEvaluation": {
+    "catalogSize": 205,
+    "chinaAdministrativeDivisionEntries": 44712,
+    "chinaAdministrativeDivisionLevels": [
+      "province",
+      "prefecture-city",
+      "county-district",
+      "township-street"
+    ],
+    "goldReport": "app/build/reports/gold/cn-mainland-rules-v1.json",
+    "goldCorpusCases": 32,
+    "expectedMatches": 29,
+    "truePositive": 29,
+    "falsePositive": 0,
+    "falseNegative": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "minimumPrecision": 0.99,
+    "minimumRecall": 0.995,
+    "scope": "synthetic deterministic-rule regression only; not a real-business OCR, ASR or video acceptance result"
+  },
+  "largeFileAcceptance": {
+    "report": "audit/evidence/pdf-1gib-jobobject-telemetry-20260814.json",
+    "reportSha256": "c7afb383a852a810e7d415ea71129f1d279f8f13f16200e7d1d13ead5e7d481e",
+    "inputBytes": 1073741824,
+    "inputSha256": "1018aa7c748c61d26b91f3818ba71b30fd6f129da4c118954e9620300c9ae684",
+    "status": "passed-synthetic-pdf",
+    "durationMillis": 110983,
+    "pages": 128,
+    "matches": 256,
+    "outputBytes": 5152390,
+    "outputSha256": "6f87e2870b59862ab579a3e1539ca0ed89d08eb69f7b10232405992da24c49d8",
+    "windowsJobObjectApplied": true,
+    "committedMemoryLimitBytes": 4294967296,
+    "peakJobCommittedBytes": 473759744,
+    "peakProcessCommittedBytes": 398909440,
+    "peakAdditionalDiskBytes": 5781663
+  },
+  "verifiedFeatures": [
+    "DOCX, XLSX and PPTX package-level event-stream redaction with residual scans on synthetic documents",
+    "PDF high-security rasterization with every-page local Tesseract OCR on a synthetic exact-1-GiB input",
+    "synthetic OFD generation plus three pinned Apache-2.0 OFDRW upstream samples for text, JPEG and signature rendering/decoding",
+    "ZIP, TAR, TAR.GZ and 7Z archive processing; RAR recognition and feedback only",
+    "205-rule Chinese, English and international deterministic rule engine with 44712-entry mainland China four-level administrative-division lexicon, custom rules, blacklist and paginated management",
+    "filename and archive-entry path redaction with collision handling",
+    "encrypted-original restore center and batch restore audit trail",
+    "local media ASR, subtitle rewrite, face, QR, plate and text masking on synthetic or official samples",
+    "conservative temporal bridge between compatible sampled-frame detections",
+    "Windows worker Job Object lifetime and committed-memory containment plus task telemetry",
+    "Ed25519 signed offline update verification, exact file-set checks, data exclusion, backup and rollback smoke",
+    "offline Windows environment preflight, bundled component repair and resource-profile selection",
+    "Chinese and English UI resources and step-by-step workflow"
+  ],
+  "unverifiedOrBlocked": [
+    "Strong file and network permission sandbox: Windows Job Object is resource containment, not AppContainer or a low-privilege account",
+    "macOS 13 Intel and Apple Silicon package execution, signing, notarization and real-machine acceptance",
+    "Authenticode signing and project-owner release-key custody; the trusted Ed25519 public-key template is intentionally empty",
+    "Authorized real legal/OCR/OFD/audio/video redaction gold corpus; synthetic regression and proposed acceptance thresholds are documented but do not replace business acceptance",
+    "Real business signed and complex OFD multi-reader compatibility beyond the three pinned upstream samples",
+    "Malicious-document corpus and independent penetration/security assessment",
+    "Actual 10000-file case batch and 1-GiB long-media endurance acceptance",
+    "Current BtbN FFmpeg binary Release is blocked until a complete corresponding-source closure or a source-complete minimal LGPL build is verified",
+    "The complete Windows offline package and package smoke acceptance must be regenerated after the Java namespace migration",
+    "GitHub workflow files are prepared but have not run because the public repository is empty; branch protection and Private Vulnerability Reporting are not yet enabled"
+  ]
+}

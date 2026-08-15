@@ -1,0 +1,50 @@
+{
+    "generatedAt":  "2026-08-15T15:26:42.5414716Z",
+    "status":  "passed",
+    "sourceSentToExternalScanner":  false,
+    "networkUse":  "none",
+    "vulnerabilityDatabaseMode":  "offline-cache",
+    "vulnerabilityDatabaseRefreshRequested":  false,
+    "vulnerabilityDatabaseChangedThisRun":  false,
+    "vulnerabilityDatabaseSnapshotUtc":  "2026-08-14T02:21:10.2481313Z",
+    "checks":  [
+                   {
+                       "name":  "build-test-sbom",
+                       "passed":  true,
+                       "detail":  "exitCode=0; internalLogRetainedLocally=true"
+                   },
+                   {
+                       "name":  "cyclonedx-sbom-present",
+                       "passed":  true,
+                       "detail":  "app/build/reports/cyclonedx-direct/bom.json"
+                   },
+                   {
+                       "name":  "secret-scan",
+                       "passed":  true,
+                       "detail":  "exitCode=0; internalLogRetainedLocally=true"
+                   },
+                   {
+                       "name":  "offline-vulnerability-scan",
+                       "passed":  true,
+                       "detail":  "exitCode=0; internalLogRetainedLocally=true"
+                   },
+                   {
+                       "name":  "forbidden-dependency-policy",
+                       "passed":  true,
+                       "detail":  "no forbidden coordinates"
+                   },
+                   {
+                       "name":  "official-opencv-api-only",
+                       "passed":  true,
+                       "detail":  "obsoleteApiHits=0"
+                   },
+                   {
+                       "name":  "official-opencv-native-hash",
+                       "passed":  true,
+                       "detail":  "sha256=0a3fcf83e381ce5f49e155ff10e5b3a20dfc7c6590dbfb2c6c5f3dd8b684ab6c"
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

@@ -1,0 +1,15 @@
+Doc Redaction / 智能文档脱敏系统
+
+Copyright (c) 2026 caipeijia833
+
+Primary maintainer: caipeijia833 (https://github.com/caipeijia833).
+The project copyright holder is caipeijia833. This public handle is the
+copyright-holder designation selected by the project owner for this release.
+
+This product includes software developed by third parties. In particular,
+portions of the isolated OFD worker are derived and modified from OFDRW 2.4.0,
+Copyright (c) 2020 Quan guanyu and OFDRW contributors, licensed under the
+Apache License, Version 2.0.
+
+See THIRD_PARTY_NOTICES.md and the component manifests under audit/ for
+versions, source locations, hashes, licenses, and complete attribution.

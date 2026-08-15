@@ -1,0 +1,34 @@
+{
+  "handoff_version": "yichen-content-handoff/v1",
+  "producer_skill": "yichen-content-archive",
+  "operation": "content_archive",
+  "scope": {
+    "platforms": ["web"],
+    "input_kind": "confirmed_candidates",
+    "discovery_performed": false
+  },
+  "authorization": {
+    "private_read_authorized_this_turn": null,
+    "download_authorized_this_turn": true,
+    "authorization_not_transferable": true
+  },
+  "artifacts": [
+    {
+      "kind": "archive_manifest",
+      "path": "audit/source-archives/20260814-ofdrw-public-samples/archive-manifest.jsonl",
+      "count": 4
+    }
+  ],
+  "counts": {
+    "input": 4,
+    "success": 4,
+    "failed": 0,
+    "skipped": 0,
+    "unsupported": 0
+  },
+  "failures": [],
+  "next_step": {
+    "action": "none",
+    "requires_explicit_user_request": true
+  }
+}

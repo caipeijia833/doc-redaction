@@ -1,0 +1,57 @@
+* text=auto
+*.java text eol=lf
+*.gradle text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+*.command text eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# Large model/AI assets (must be delivered by release/mirror, not core source)
+*.gguf filter=lfs diff=lfs merge=lfs -text
+*.safetensors filter=lfs diff=lfs merge=lfs -text
+*.pt filter=lfs diff=lfs merge=lfs -text
+*.pth filter=lfs diff=lfs merge=lfs -text
+*.ckpt filter=lfs diff=lfs merge=lfs -text
+*.onnx filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.weights filter=lfs diff=lfs merge=lfs -text
+
+# Explicit model directories
+models/* filter=lfs diff=lfs merge=lfs -text
+models/**/* filter=lfs diff=lfs merge=lfs -text
+
+# Binary and media outputs
+*.jar binary
+*.zip binary
+*.7z binary
+*.tar binary
+*.gz binary
+*.xz binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.tif binary
+*.tiff binary
+*.webp binary
+*.pdf binary
+*.docx binary
+*.doc binary
+*.xlsx binary
+*.xls binary
+*.pptx binary
+*.ppt binary
+*.ofd binary
+*.mp4 binary
+*.mkv binary
+*.avi binary
+*.mov binary
+*.wav binary
+*.m4a binary
+*.flac binary
+*.mp3 binary

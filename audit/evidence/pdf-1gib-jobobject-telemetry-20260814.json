@@ -1,0 +1,60 @@
+{
+    "schemaVersion":  1,
+    "startedAt":  "2026-08-14T02:36:21.933107800Z",
+    "finishedAt":  "2026-08-14T02:38:12.915416900Z",
+    "input":  "synthetic://local-generated/synthetic-pdf-1gib.pdf",
+    "inputBytes":  1073741824,
+    "inputSha256":  "1018aa7c748c61d26b91f3818ba71b30fd6f129da4c118954e9620300c9ae684",
+    "observedStatus":  "COMPLETED",
+    "durationMillis":  110983,
+    "workerMaxHeap":  "2048m",
+    "outputBytes":  5152390,
+    "outputSha256":  "6f87e2870b59862ab579a3e1539ca0ed89d08eb69f7b10232405992da24c49d8",
+    "structureValidation":  "PDF_OK pages=128",
+    "archiveInspection":  null,
+    "job":  {
+                "originalName":  "synthetic-pdf-1gib.pdf",
+                "selectedRuleCategories":  [
+
+                                           ],
+                "status":  "COMPLETED",
+                "createdAt":  "2026-08-14T02:36:26.056142200Z",
+                "updatedAt":  "2026-08-14T02:38:12.797178900Z",
+                "startedAt":  "2026-08-14T02:36:26.100324800Z",
+                "completedAt":  "2026-08-14T02:38:12.797178900Z",
+                "sha256":  "1018aa7c748c61d26b91f3818ba71b30fd6f129da4c118954e9620300c9ae684",
+                "size":  1073741824,
+                "unitsProcessed":  128,
+                "totalMatches":  256,
+                "counts":  {
+                               "CN_MOBILE_PHONE":  128,
+                               "EMAIL_ADDRESS":  128
+                           },
+                "workerTelemetry":  {
+                                        "windowsJobObjectApplied":  true,
+                                        "isolationRequired":  true,
+                                        "committedMemoryLimitBytes":  4294967296,
+                                        "peakJobCommittedBytes":  473759744,
+                                        "peakProcessCommittedBytes":  398909440,
+                                        "baselineJobDirectoryBytes":  1073742959,
+                                        "peakJobDirectoryBytes":  1079524622,
+                                        "peakAdditionalDiskBytes":  5781663,
+                                        "status":  "applied: kill-on-close, active-process=32, process/job committed-memory limit"
+                                    },
+                "error":  null,
+                "archiveFormat":  null,
+                "confirmationRequired":  false,
+                "reviewRequired":  false,
+                "includeUnprocessed":  false,
+                "archiveEntryDecisionCount":  0,
+                "processingMode":  "external_irreversible",
+                "restorable":  false,
+                "restoreCount":  0,
+                "lastRestoredAt":  null,
+                "retryCount":  0,
+                "cancelAvailable":  false,
+                "retryAvailable":  false,
+                "deleteAvailable":  true,
+                "downloadAvailable":  true
+            }
+}

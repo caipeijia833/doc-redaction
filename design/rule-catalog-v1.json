@@ -1,0 +1,545 @@
+{
+  "schema_version": 1,
+  "catalog_version": "1.0.0-draft",
+  "locale": "zh-CN",
+  "status": "specification-only",
+  "notice": "This catalog defines identifiers and behavior only. Detection patterns are not production-ready until synthetic and adversarial tests pass.",
+  "conflict_policy": {
+    "mandatory_redact_vs_allowlist": "reject_configuration",
+    "overlap_resolution": "prefer_longer_then_higher_priority",
+    "manual_locked_region": "highest_priority",
+    "low_confidence": "send_to_review"
+  },
+  "profiles": {
+    "internal_reversible": {
+      "default_action": "deterministic_token",
+      "mapping_export_allowed": false
+    },
+    "external_release": {
+      "default_action": "irreversible_mask_or_remove",
+      "mapping_export_allowed": false
+    }
+  },
+  "rules": [
+    {
+      "id": "CN_PERSON_NAME",
+      "label": "中文姓名",
+      "source": "prototype",
+      "category": "identity",
+      "detectors": ["dictionary", "context", "ner"],
+      "scopes": ["text", "ocr", "audio_transcript"],
+      "validation": "context_required",
+      "reversible": true
+    },
+    {
+      "id": "POSTAL_ADDRESS",
+      "label": "地址",
+      "source": "prototype",
+      "category": "contact_location",
+      "detectors": ["context", "ner"],
+      "scopes": ["text", "ocr", "audio_transcript"],
+      "validation": "administrative_division_dictionary",
+      "reversible": true
+    },
+    {
+      "id": "ORGANIZATION_NAME",
+      "label": "单位、机构、律所名称",
+      "source": "prototype",
+      "category": "organization",
+      "detectors": ["dictionary", "context", "ner"],
+      "scopes": ["text", "ocr"],
+      "validation": "context_optional",
+      "reversible": true
+    },
+    {
+      "id": "CN_UNIFIED_SOCIAL_CREDIT_CODE",
+      "label": "统一社会信用代码",
+      "source": "prototype",
+      "category": "organization",
+      "detectors": ["regex", "checksum"],
+      "scopes": ["text", "ocr", "barcode_payload"],
+      "validation": "gb32100_checksum",
+      "reversible": true
+    },
+    {
+      "id": "CN_RESIDENT_ID",
+      "label": "居民身份证号",
+      "source": "prototype",
+      "category": "identity",
+      "detectors": ["regex", "checksum", "context"],
+      "scopes": ["text", "ocr", "barcode_payload", "audio_transcript"],
+      "validation": "gb11643_checksum_and_date",
+      "reversible": true
+    },
+    {
+      "id": "BANK_CARD_NUMBER",
+      "label": "银行卡号",
+      "source": "prototype",
+      "category": "financial",
+      "detectors": ["regex", "checksum", "context"],
+      "scopes": ["text", "ocr", "barcode_payload"],
+      "validation": "luhn_when_applicable",
+      "reversible": true
+    },
+    {
+      "id": "EMAIL_ADDRESS",
+      "label": "电子邮箱",
+      "source": "prototype",
+      "category": "contact_location",
+      "detectors": ["regex"],
+      "scopes": ["text", "ocr", "metadata"],
+      "validation": "syntax",
+      "reversible": true
+    },
+    {
+      "id": "CN_MOBILE_PHONE",
+      "label": "中国大陆手机号",
+      "source": "prototype",
+      "category": "contact_location",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr", "audio_transcript"],
+      "validation": "numbering_plan",
+      "reversible": true
+    },
+    {
+      "id": "TELEPHONE_NUMBER",
+      "label": "固定电话及传真",
+      "source": "prototype",
+      "category": "contact_location",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr", "audio_transcript"],
+      "validation": "numbering_plan",
+      "reversible": true
+    },
+    {
+      "id": "POSTAL_CODE",
+      "label": "邮政编码",
+      "source": "prototype",
+      "category": "contact_location",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr"],
+      "validation": "context_required",
+      "reversible": true
+    },
+    {
+      "id": "IP_ADDRESS",
+      "label": "IPv4及IPv6地址",
+      "source": "prototype",
+      "category": "network_security",
+      "detectors": ["parser"],
+      "scopes": ["text", "ocr", "metadata"],
+      "validation": "ip_parser",
+      "reversible": true
+    },
+    {
+      "id": "CONTRACT_NUMBER",
+      "label": "合同编号",
+      "source": "prototype",
+      "category": "business",
+      "detectors": ["regex", "context", "dictionary"],
+      "scopes": ["text", "ocr", "barcode_payload"],
+      "validation": "tenant_template",
+      "reversible": true
+    },
+    {
+      "id": "PASSPORT_NUMBER",
+      "label": "护照号码",
+      "source": "prototype",
+      "category": "identity",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr", "mrz"],
+      "validation": "document_family_and_mrz_checksum",
+      "reversible": true
+    },
+    {
+      "id": "SECURITIES_CODE",
+      "label": "股票及证券代码",
+      "source": "prototype",
+      "category": "financial",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr"],
+      "validation": "market_context_required",
+      "reversible": true
+    },
+    {
+      "id": "HK_MACAU_TAIWAN_DOCUMENT",
+      "label": "港澳台通行证及居住证",
+      "source": "prototype",
+      "category": "identity",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr"],
+      "validation": "document_family",
+      "reversible": true
+    },
+    {
+      "id": "BUSINESS_REGISTRATION_NUMBER",
+      "label": "工商注册号",
+      "source": "prototype",
+      "category": "organization",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr"],
+      "validation": "legacy_registration_rules",
+      "reversible": true
+    },
+    {
+      "id": "VEHICLE_IDENTIFICATION_NUMBER",
+      "label": "车辆识别代号VIN",
+      "source": "prototype",
+      "category": "vehicle_property",
+      "detectors": ["regex", "checksum", "context"],
+      "scopes": ["text", "ocr", "barcode_payload"],
+      "validation": "iso3779_when_applicable",
+      "reversible": true
+    },
+    {
+      "id": "URL",
+      "label": "网址",
+      "source": "prototype",
+      "category": "network_security",
+      "detectors": ["parser"],
+      "scopes": ["text", "ocr", "hyperlink", "metadata"],
+      "validation": "uri_parser",
+      "reversible": true
+    },
+    {
+      "id": "CN_JUDICIAL_CASE_NUMBER",
+      "label": "司法案号",
+      "source": "prototype",
+      "category": "legal_case",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr", "barcode_payload"],
+      "validation": "court_case_structure",
+      "reversible": true
+    },
+    {
+      "id": "REAL_ESTATE_CERTIFICATE_NUMBER",
+      "label": "不动产权证书号",
+      "source": "prototype",
+      "category": "vehicle_property",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr"],
+      "validation": "context_required",
+      "reversible": true
+    },
+    {
+      "id": "ARABIC_NUMERAL_AMOUNT",
+      "label": "阿拉伯数字金额",
+      "source": "prototype",
+      "category": "financial",
+      "detectors": ["parser", "context"],
+      "scopes": ["text", "ocr", "spreadsheet_value", "formula_cache"],
+      "validation": "currency_context",
+      "reversible": true
+    },
+    {
+      "id": "CN_UPPERCASE_AMOUNT",
+      "label": "中文大写金额",
+      "source": "prototype",
+      "category": "financial",
+      "detectors": ["parser", "context"],
+      "scopes": ["text", "ocr"],
+      "validation": "chinese_amount_parser",
+      "reversible": true
+    },
+    {
+      "id": "WECHAT_ID",
+      "label": "微信号",
+      "source": "prototype",
+      "category": "contact_location",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr", "qr_payload"],
+      "validation": "context_required",
+      "reversible": true
+    },
+    {
+      "id": "QQ_ID",
+      "label": "QQ号",
+      "source": "prototype",
+      "category": "contact_location",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr"],
+      "validation": "context_required",
+      "reversible": true
+    },
+    {
+      "id": "INVOICE_CODE_NUMBER",
+      "label": "发票代码及号码",
+      "source": "prototype",
+      "category": "financial",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr", "qr_payload"],
+      "validation": "invoice_family",
+      "reversible": true
+    },
+    {
+      "id": "CN_LICENSE_PLATE",
+      "label": "中国车辆号牌",
+      "source": "prototype",
+      "category": "vehicle_property",
+      "detectors": ["regex", "object_detector", "ocr"],
+      "scopes": ["text", "ocr", "image", "video"],
+      "validation": "plate_family",
+      "reversible": true
+    },
+    {
+      "id": "MAC_ADDRESS",
+      "label": "MAC地址",
+      "source": "prototype",
+      "category": "network_security",
+      "detectors": ["parser"],
+      "scopes": ["text", "ocr", "metadata"],
+      "validation": "mac_parser",
+      "reversible": true
+    },
+    {
+      "id": "CN_DATE",
+      "label": "中文日期",
+      "source": "prototype",
+      "category": "quasi_identifier",
+      "detectors": ["date_parser", "context"],
+      "scopes": ["text", "ocr", "metadata", "audio_transcript"],
+      "validation": "calendar_date",
+      "reversible": true
+    },
+    {
+      "id": "DRIVER_LICENSE_NUMBER",
+      "label": "驾驶证号码",
+      "source": "extension",
+      "category": "identity",
+      "detectors": ["regex", "context", "checksum"],
+      "scopes": ["text", "ocr", "barcode_payload"],
+      "validation": "document_family",
+      "reversible": true
+    },
+    {
+      "id": "SOCIAL_MEDICAL_INSURANCE_NUMBER",
+      "label": "社保及医保编号",
+      "source": "extension",
+      "category": "identity",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr"],
+      "validation": "regional_template",
+      "reversible": true
+    },
+    {
+      "id": "EMPLOYEE_STUDENT_NUMBER",
+      "label": "工号及学号",
+      "source": "extension",
+      "category": "identity",
+      "detectors": ["regex", "context", "tenant_dictionary"],
+      "scopes": ["text", "ocr", "spreadsheet_value"],
+      "validation": "tenant_template",
+      "reversible": true
+    },
+    {
+      "id": "PAYMENT_ACCOUNT",
+      "label": "支付账户及数字钱包",
+      "source": "extension",
+      "category": "financial",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr", "qr_payload"],
+      "validation": "provider_context",
+      "reversible": true
+    },
+    {
+      "id": "TRANSACTION_SERIAL_NUMBER",
+      "label": "交易流水号",
+      "source": "extension",
+      "category": "financial",
+      "detectors": ["regex", "context", "tenant_template"],
+      "scopes": ["text", "ocr", "spreadsheet_value"],
+      "validation": "context_required",
+      "reversible": true
+    },
+    {
+      "id": "ARBITRATION_MEDIATION_NOTARY_NUMBER",
+      "label": "仲裁、调解及公证编号",
+      "source": "extension",
+      "category": "legal_case",
+      "detectors": ["regex", "context"],
+      "scopes": ["text", "ocr"],
+      "validation": "document_family",
+      "reversible": true
+    },
+    {
+      "id": "CASE_PARTICIPANT_ROLE",
+      "label": "当事人、代理人、证人及办案人员",
+      "source": "extension",
+      "category": "legal_case",
+      "detectors": ["role_context", "ner", "dictionary"],
+      "scopes": ["text", "ocr", "audio_transcript"],
+      "validation": "legal_role_context",
+      "reversible": true
+    },
+    {
+      "id": "MINOR_PERSON_INFORMATION",
+      "label": "未成年人信息",
+      "source": "extension",
+      "category": "legal_case",
+      "detectors": ["context", "ner", "age_inference"],
+      "scopes": ["text", "ocr", "audio_transcript"],
+      "validation": "human_review_required",
+      "reversible": true
+    },
+    {
+      "id": "GEO_COORDINATE",
+      "label": "经纬度及精确位置",
+      "source": "extension",
+      "category": "contact_location",
+      "detectors": ["parser", "context", "metadata_scan"],
+      "scopes": ["text", "ocr", "image_metadata", "video_metadata"],
+      "validation": "coordinate_range",
+      "reversible": true
+    },
+    {
+      "id": "DEVICE_IDENTIFIER",
+      "label": "设备及终端标识",
+      "source": "extension",
+      "category": "network_security",
+      "detectors": ["regex", "context", "metadata_scan"],
+      "scopes": ["text", "ocr", "metadata"],
+      "validation": "identifier_family",
+      "reversible": true
+    },
+    {
+      "id": "API_KEY_TOKEN_COOKIE",
+      "label": "API Key、Token及Cookie",
+      "source": "extension",
+      "category": "credential",
+      "detectors": ["high_entropy", "provider_prefix", "context"],
+      "scopes": ["text", "ocr", "hyperlink", "metadata", "embedded_file"],
+      "validation": "mandatory_redact",
+      "reversible": false
+    },
+    {
+      "id": "PRIVATE_KEY_CERTIFICATE",
+      "label": "私钥及证书密钥材料",
+      "source": "extension",
+      "category": "credential",
+      "detectors": ["pem_parser", "binary_signature", "context"],
+      "scopes": ["text", "ocr", "embedded_file"],
+      "validation": "mandatory_redact",
+      "reversible": false
+    },
+    {
+      "id": "DATABASE_CONNECTION_STRING",
+      "label": "数据库连接串",
+      "source": "extension",
+      "category": "credential",
+      "detectors": ["uri_parser", "context"],
+      "scopes": ["text", "ocr", "hyperlink", "embedded_file"],
+      "validation": "mandatory_redact",
+      "reversible": false
+    },
+    {
+      "id": "INTERNAL_HOST_DOMAIN_PATH",
+      "label": "内部主机、域名及文件路径",
+      "source": "extension",
+      "category": "network_security",
+      "detectors": ["parser", "context", "tenant_dictionary"],
+      "scopes": ["text", "ocr", "hyperlink", "metadata"],
+      "validation": "tenant_policy",
+      "reversible": true
+    },
+    {
+      "id": "HANDWRITTEN_SIGNATURE",
+      "label": "手写签名",
+      "source": "extension",
+      "category": "biometric",
+      "detectors": ["object_detector", "manual_region"],
+      "scopes": ["image", "pdf_page", "ofd_page", "slide_image", "video"],
+      "validation": "human_review_required",
+      "reversible": false
+    },
+    {
+      "id": "SEAL_STAMP",
+      "label": "印章及签章可视图像",
+      "source": "extension",
+      "category": "organization",
+      "detectors": ["object_detector", "ocr", "manual_region"],
+      "scopes": ["image", "pdf_page", "ofd_page", "slide_image", "video"],
+      "validation": "human_review_required",
+      "reversible": false
+    },
+    {
+      "id": "QR_BARCODE_PAYLOAD",
+      "label": "二维码及条码载荷",
+      "source": "extension",
+      "category": "encoded_content",
+      "detectors": ["barcode_decoder", "nested_rule_scan"],
+      "scopes": ["image", "pdf_page", "ofd_page", "slide_image", "video"],
+      "validation": "decode_then_rescan",
+      "reversible": true
+    },
+    {
+      "id": "FACE",
+      "label": "人脸",
+      "source": "extension",
+      "category": "biometric",
+      "detectors": ["object_detector", "tracker"],
+      "scopes": ["image", "pdf_page", "ofd_page", "slide_image", "video"],
+      "validation": "confidence_and_review",
+      "reversible": false
+    },
+    {
+      "id": "MEDICAL_RECORD_DIAGNOSIS",
+      "label": "病历号、诊断及健康信息",
+      "source": "extension",
+      "category": "medical",
+      "detectors": ["regex", "dictionary", "context", "ner"],
+      "scopes": ["text", "ocr", "audio_transcript"],
+      "validation": "medical_context",
+      "reversible": true
+    },
+    {
+      "id": "AUTHOR_TEMPLATE_METADATA",
+      "label": "作者、组织、模板路径及文档元数据",
+      "source": "extension",
+      "category": "hidden_content",
+      "detectors": ["metadata_scan"],
+      "scopes": ["office_metadata", "pdf_metadata", "ofd_metadata", "image_metadata", "video_metadata"],
+      "validation": "release_remove_default",
+      "reversible": false
+    },
+    {
+      "id": "COMMENT_TRACK_CHANGE_NOTE",
+      "label": "批注、修订、备注及脚注",
+      "source": "extension",
+      "category": "hidden_content",
+      "detectors": ["format_object_scan", "nested_rule_scan"],
+      "scopes": ["word_comment", "word_revision", "spreadsheet_comment", "slide_note", "pdf_annotation"],
+      "validation": "release_remove_or_sanitize",
+      "reversible": false
+    },
+    {
+      "id": "HIDDEN_SHEET_SLIDE_TEXT",
+      "label": "隐藏工作表、行列、幻灯片及隐藏文本",
+      "source": "extension",
+      "category": "hidden_content",
+      "detectors": ["format_object_scan", "nested_rule_scan"],
+      "scopes": ["spreadsheet_hidden", "slide_hidden", "word_hidden_text", "pdf_hidden_text"],
+      "validation": "must_scan",
+      "reversible": false
+    },
+    {
+      "id": "EMBEDDED_ATTACHMENT_OBJECT",
+      "label": "嵌入文件、附件及对象",
+      "source": "extension",
+      "category": "hidden_content",
+      "detectors": ["container_enumeration", "recursive_scan"],
+      "scopes": ["office_embedding", "pdf_attachment", "ofd_attachment"],
+      "validation": "recursive_policy",
+      "reversible": false
+    },
+    {
+      "id": "AUDIO_SENSITIVE_SPEECH",
+      "label": "音轨中的敏感语音",
+      "source": "extension",
+      "category": "media",
+      "detectors": ["offline_asr", "nested_rule_scan"],
+      "scopes": ["audio", "video_audio"],
+      "validation": "human_review_required",
+      "reversible": false
+    }
+  ]
+}

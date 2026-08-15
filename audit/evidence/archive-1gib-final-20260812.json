@@ -1,0 +1,121 @@
+{
+    "schemaVersion":  1,
+    "startedAt":  "2026-08-12T15:05:48.895996500Z",
+    "finishedAt":  "2026-08-12T15:05:55.776249500Z",
+    "input":  "synthetic://local-generated/synthetic-mixed-dossier-exact-1gib.tar",
+    "inputBytes":  1073741824,
+    "inputSha256":  "6a24c88450ead902b7835336004e53d6224583fd80ac66b8c5c57c0f2d195d8d",
+    "observedStatus":  "AWAITING_CONFIRMATION",
+    "durationMillis":  6880,
+    "workerMaxHeap":  "2048m",
+    "outputBytes":  0,
+    "outputSha256":  null,
+    "structureValidation":  null,
+    "archiveInspection":  {
+                              "format":  "tar",
+                              "fileCount":  5,
+                              "processableCount":  4,
+                              "excludedByDefaultCount":  1,
+                              "totalDeclaredSize":  1073737466,
+                              "rejected":  false,
+                              "counts":  {
+                                             "REDACTABLE":  4,
+                                             "UNSUPPORTED":  1
+                                         },
+                              "warnings":  [
+
+                                           ],
+                              "includeUnprocessedConfirmation":  "INCLUDE_UNREVIEWED_FILES",
+                              "entries":  [
+                                              {
+                                                  "index":  1,
+                                                  "path":  "processable/合成验收样例.docx",
+                                                  "directory":  false,
+                                                  "size":  3127,
+                                                  "compressedSize":  -1,
+                                                  "category":  "REDACTABLE",
+                                                  "reason":  "可使用当前格式处理器脱敏",
+                                                  "safePath":  true,
+                                                  "readable":  true,
+                                                  "processedByDefault":  true
+                                              },
+                                              {
+                                                  "index":  2,
+                                                  "path":  "processable/合成验收样例.xlsx",
+                                                  "directory":  false,
+                                                  "size":  5522,
+                                                  "compressedSize":  -1,
+                                                  "category":  "REDACTABLE",
+                                                  "reason":  "可使用当前格式处理器脱敏",
+                                                  "safePath":  true,
+                                                  "readable":  true,
+                                                  "processedByDefault":  true
+                                              },
+                                              {
+                                                  "index":  3,
+                                                  "path":  "processable/合成验收样例.pptx",
+                                                  "directory":  false,
+                                                  "size":  25505,
+                                                  "compressedSize":  -1,
+                                                  "category":  "REDACTABLE",
+                                                  "reason":  "可使用当前格式处理器脱敏",
+                                                  "safePath":  true,
+                                                  "readable":  true,
+                                                  "processedByDefault":  true
+                                              },
+                                              {
+                                                  "index":  4,
+                                                  "path":  "processable/synthetic-acceptance-sample.pdf",
+                                                  "directory":  false,
+                                                  "size":  912,
+                                                  "compressedSize":  -1,
+                                                  "category":  "REDACTABLE",
+                                                  "reason":  "可使用当前格式处理器脱敏",
+                                                  "safePath":  true,
+                                                  "readable":  true,
+                                                  "processedByDefault":  true
+                                              },
+                                              {
+                                                  "index":  5,
+                                                  "path":  "unsupported/padding.bin",
+                                                  "directory":  false,
+                                                  "size":  1073702400,
+                                                  "compressedSize":  -1,
+                                                  "category":  "UNSUPPORTED",
+                                                  "reason":  "当前不支持该文件格式",
+                                                  "safePath":  true,
+                                                  "readable":  true,
+                                                  "processedByDefault":  false
+                                              }
+                                          ]
+                          },
+    "job":  {
+                "originalName":  "synthetic-mixed-dossier-exact-1gib.tar",
+                "status":  "CANCELLED",
+                "createdAt":  "2026-08-12T15:05:53.604240600Z",
+                "updatedAt":  "2026-08-12T15:05:55.703249800Z",
+                "startedAt":  null,
+                "completedAt":  "2026-08-12T15:05:55.703249800Z",
+                "sha256":  "6a24c88450ead902b7835336004e53d6224583fd80ac66b8c5c57c0f2d195d8d",
+                "size":  1073741824,
+                "unitsProcessed":  0,
+                "totalMatches":  0,
+                "counts":  {
+
+                           },
+                "error":  "用户已取消任务",
+                "archiveFormat":  "tar",
+                "confirmationRequired":  false,
+                "reviewRequired":  false,
+                "includeUnprocessed":  false,
+                "processingMode":  "external_irreversible",
+                "restorable":  false,
+                "restoreCount":  0,
+                "lastRestoredAt":  null,
+                "retryCount":  0,
+                "cancelAvailable":  false,
+                "retryAvailable":  false,
+                "deleteAvailable":  true,
+                "downloadAvailable":  false
+            }
+}

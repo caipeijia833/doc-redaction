@@ -1,0 +1,37 @@
+{
+    "generatedAt":  "2026-08-13T13:27:39.2612923Z",
+    "model":  "Qwen/Qwen3-VL-2B-Instruct-GGUF",
+    "quantization":  "Q4_K_M",
+    "runtime":  "llama.cpp b10405",
+    "offlineAtRuntime":  true,
+    "components":  [
+                       {
+                           "name":  "Qwen3VL-2B-Instruct-Q4_K_M.gguf",
+                           "kind":  "model",
+                           "url":  "https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct-GGUF/resolve/main/Qwen3VL-2B-Instruct-Q4_K_M.gguf?download=true",
+                           "sha256":  "089d75c52f4b7ffc56ba998ffc50aae89fcafc755f9e7208aacca281dca6c2ae",
+                           "size":  1107409952
+                       },
+                       {
+                           "name":  "mmproj-Qwen3VL-2B-Instruct-Q8_0.gguf",
+                           "kind":  "projector",
+                           "url":  "https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct-GGUF/resolve/main/mmproj-Qwen3VL-2B-Instruct-Q8_0.gguf?download=true",
+                           "sha256":  "f9a68fabba69c3b81e153367b2c7521030b0fa8bb0de400c9599c8e6725f9c82",
+                           "size":  445053216
+                       },
+                       {
+                           "name":  "llama-b10405-bin-win-cpu-x64.zip",
+                           "kind":  "runtime-cpu",
+                           "url":  "https://github.com/ggml-org/llama.cpp/releases/download/b10405/llama-b10405-bin-win-cpu-x64.zip",
+                           "sha256":  "31f3bcc3f7645715b3ed8e845ab338d94659aa0e512b2211b8d94b9c8eb24758",
+                           "size":  18468077
+                       },
+                       {
+                           "name":  "llama-b10405-bin-win-vulkan-x64.zip",
+                           "kind":  "runtime-vulkan",
+                           "url":  "https://github.com/ggml-org/llama.cpp/releases/download/b10405/llama-b10405-bin-win-vulkan-x64.zip",
+                           "sha256":  "54b51536350b5bc7d32f2882f8ce2f0e66fdcd65c434ca1c6e10cc6112113d77",
+                           "size":  34576307
+                       }
+                   ]
+}

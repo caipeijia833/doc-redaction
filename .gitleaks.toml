@@ -1,0 +1,14 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated binaries, downloaded upstream mirrors and private stress corpora are outside the publishable source tree"
+paths = [
+  '''(^|[\\/])\.tools([\\/]|$)''',
+  '''(^|[\\/])app[\\/]build([\\/]|$)''',
+  '''(^|[\\/])dist([\\/]|$)''',
+  '''(^|[\\/])stress-(data|debug|runs)([\\/]|$)''',
+  '''(^|[\\/])browser-qa-data([\\/]|$)''',
+  '''(^|[\\/])upstream([\\/]|$)''',
+  '''(^|[\\/])audit[\\/]results[\\/]security-gate-[0-9]{8}T[0-9]{6}Z([\\/]|$)'''
+]
