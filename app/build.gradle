@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.cyclonedx.bom' version '3.4.0'
+    id 'org.cyclonedx.bom' version '3.4.1'
 }
 
 group = 'io.github.caipeijia833.docredaction'
