@@ -82,6 +82,7 @@ public final class ArchiveProcessor {
         List<ManifestItem> manifest = new ArrayList<>();
         Set<String> usedPaths = initialUsedPaths();
         ExpandedDataLimiter expanded = new ExpandedDataLimiter(ArchivePolicy.MAX_TOTAL_DECLARED_BYTES);
+        Path entryRoot = work.resolve(".archive-entry-path-root").toAbsolutePath().normalize();
         try (ZipFile source = ZipFile.builder().setPath(input).get();
              ZipArchiveOutputStream target = new ZipArchiveOutputStream(output.toFile())) {
             target.setUseZip64(org.apache.commons.compress.archivers.zip.Zip64Mode.AsNeeded);
@@ -93,8 +94,21 @@ public final class ArchiveProcessor {
                 if (entry.isDirectory()) {
                     continue;
                 }
-                String entryName = entry.getName();
                 boolean readable = source.canReadEntryData(entry) && !entry.isUnixSymlink();
+                String rawEntryName = entry.getName();
+                Path resolvedEntry;
+                try {
+                    resolvedEntry = rawEntryName == null ? null
+                            : entryRoot.resolve(rawEntryName.replace('\\', '/')).normalize();
+                } catch (RuntimeException ignored) {
+                    resolvedEntry = null;
+                }
+                if (resolvedEntry == null || !resolvedEntry.startsWith(entryRoot)
+                        || !ArchivePolicy.isSafeRelativePath(rawEntryName)) {
+                    manifest.add(unsafeEntryManifestItem(rawEntryName, readable));
+                    continue;
+                }
+                String entryName = relativeArchivePath(entryRoot, resolvedEntry);
                 ArchiveCategory category = readable ? ArchivePolicy.classify(entryName) : ArchiveCategory.DANGEROUS;
                 try (InputStream content = readable ? source.getInputStream(entry) : InputStream.nullInputStream()) {
                     handleEntry(index, entryName, entry.getSize(), readable, category, content,
@@ -115,6 +129,7 @@ public final class ArchiveProcessor {
         List<ManifestItem> manifest = new ArrayList<>();
         Set<String> usedPaths = initialUsedPaths();
         ExpandedDataLimiter expanded = new ExpandedDataLimiter(ArchivePolicy.MAX_TOTAL_DECLARED_BYTES);
+        Path entryRoot = work.resolve(".archive-entry-path-root").toAbsolutePath().normalize();
         try (InputStream rawInput = Files.newInputStream(input);
              InputStream decodedInput = gzip ? new GzipCompressorInputStream(rawInput) : rawInput;
              LimitedInputStream limitedInput = new LimitedInputStream(decodedInput,
@@ -132,9 +147,22 @@ public final class ArchiveProcessor {
                 if (entry.isDirectory()) {
                     continue;
                 }
-                String entryName = entry.getName();
                 boolean link = entry.isLink() || entry.isSymbolicLink();
                 boolean readable = source.canReadEntryData(entry) && !link;
+                String rawEntryName = entry.getName();
+                Path resolvedEntry;
+                try {
+                    resolvedEntry = rawEntryName == null ? null
+                            : entryRoot.resolve(rawEntryName.replace('\\', '/')).normalize();
+                } catch (RuntimeException ignored) {
+                    resolvedEntry = null;
+                }
+                if (resolvedEntry == null || !resolvedEntry.startsWith(entryRoot)
+                        || !ArchivePolicy.isSafeRelativePath(rawEntryName)) {
+                    manifest.add(unsafeEntryManifestItem(rawEntryName, readable));
+                    continue;
+                }
+                String entryName = relativeArchivePath(entryRoot, resolvedEntry);
                 ArchiveCategory category = readable ? ArchivePolicy.classify(entryName) : ArchiveCategory.DANGEROUS;
                 handleEntry(index, entryName, entry.getSize(), readable, category, source,
                         work, includeUnprocessed, decisions, report, manifest, usedPaths, expanded,
@@ -155,6 +183,7 @@ public final class ArchiveProcessor {
         List<ManifestItem> manifest = new ArrayList<>();
         Set<String> usedPaths = initialUsedPaths();
         ExpandedDataLimiter expanded = new ExpandedDataLimiter(ArchivePolicy.MAX_TOTAL_DECLARED_BYTES);
+        Path entryRoot = work.resolve(".archive-entry-path-root").toAbsolutePath().normalize();
         try (SevenZFile source = SevenZFile.builder().setPath(input).get();
              SevenZOutputFile target = new SevenZOutputFile(output.toFile())) {
             int index = 0;
@@ -163,8 +192,21 @@ public final class ArchiveProcessor {
                 if (entry.isDirectory()) {
                     continue;
                 }
-                String entryName = entry.getName();
                 boolean readable = entry.hasStream();
+                String rawEntryName = entry.getName();
+                Path resolvedEntry;
+                try {
+                    resolvedEntry = rawEntryName == null ? null
+                            : entryRoot.resolve(rawEntryName.replace('\\', '/')).normalize();
+                } catch (RuntimeException ignored) {
+                    resolvedEntry = null;
+                }
+                if (resolvedEntry == null || !resolvedEntry.startsWith(entryRoot)
+                        || !ArchivePolicy.isSafeRelativePath(rawEntryName)) {
+                    manifest.add(unsafeEntryManifestItem(rawEntryName, readable));
+                    continue;
+                }
+                String entryName = relativeArchivePath(entryRoot, resolvedEntry);
                 ArchiveCategory category = readable ? ArchivePolicy.classify(entryName) : ArchiveCategory.DANGEROUS;
                 try (InputStream content = readable ? source.getInputStream(entry) : InputStream.nullInputStream()) {
                     handleEntry(index, entryName, entry.getSize(), readable, category, content,
@@ -188,18 +230,10 @@ public final class ArchiveProcessor {
             Map<Integer, ArchiveEntryAction> decisions,
             ProcessReport aggregate, List<ManifestItem> manifest, Set<String> usedPaths,
             ExpandedDataLimiter expanded, EntrySink sink) throws Exception {
-        Path entryRoot = work.resolve(".archive-entry-path-root").toAbsolutePath().normalize();
-        Path resolvedEntry = null;
-        boolean declaredSafe = ArchivePolicy.isSafeRelativePath(entryName);
-        if (declaredSafe) {
-            try {
-                resolvedEntry = entryRoot.resolve(entryName.replace('\\', '/')).normalize();
-            } catch (RuntimeException ignored) {
-                // Invalid path syntax is treated as unsafe and is never written to an output archive.
-            }
-        }
-        boolean safe = resolvedEntry != null && resolvedEntry.startsWith(entryRoot);
-        String normalizedName = safe ? relativeArchivePath(entryRoot, resolvedEntry) : displayEntryName(entryName);
+        // Callers pass a normalized, root-checked archive path. Retain this policy
+        // check as a defensive boundary for future internal callers.
+        boolean safe = ArchivePolicy.isSafeRelativePath(entryName);
+        String normalizedName = safe ? entryName : displayEntryName(entryName);
         if (!safe || !readable || category == ArchiveCategory.DANGEROUS) {
             manifest.add(new ManifestItem(normalizedName, null, category.name(), "excluded",
                     safe ? "条目不可读取或属于高风险类型" : "路径不安全"));
@@ -298,6 +332,13 @@ public final class ArchiveProcessor {
 
     private static String displayEntryName(String entryName) {
         return entryName == null ? "(missing entry name)" : entryName.replace('\0', '?').replace('\\', '/');
+    }
+
+    private static ManifestItem unsafeEntryManifestItem(String entryName, boolean readable) {
+        ArchiveCategory category = readable ? ArchivePolicy.classify(displayEntryName(entryName))
+                : ArchiveCategory.DANGEROUS;
+        return new ManifestItem(displayEntryName(entryName), null, category.name(), "excluded",
+                "路径不安全");
     }
 
     private static Set<String> initialUsedPaths() {
