@@ -20,6 +20,7 @@
 /*.zip.*
 *.jar
 !app/gradle/wrapper/gradle-wrapper.jar
+!app/libs/opencv-4130.jar
 *.war
 *.ear
 *.tar
