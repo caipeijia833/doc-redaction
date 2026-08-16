@@ -52,7 +52,7 @@ dependencies {
     }
     // OFDRW 2.4.0 was compiled against PDFBox 2.x. Keep the current patched
     // 2.x line in the isolated OFD worker instead of mixing it with PDFBox 3.
-    ofdWorkerImplementation 'org.apache.pdfbox:pdfbox:2.0.37'
+    ofdWorkerImplementation 'org.apache.pdfbox:pdfbox:3.0.8'
     // OFDRW pulls a 2014 org.json release with known denial-of-service flaws.
     ofdWorkerImplementation 'org.json:json:20260719'
     ofdWorkerRuntimeOnly 'org.slf4j:slf4j-nop:1.7.36'
