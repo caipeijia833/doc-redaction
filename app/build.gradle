@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.cyclonedx.bom' version '3.4.0'
+    id 'org.cyclonedx.bom' version '3.4.1'
 }
 
 group = 'io.github.caipeijia833.docredaction'
@@ -44,7 +44,7 @@ dependencies {
     // Java regex because they are shipped and reviewed with the application.
     implementation 'com.google.re2j:re2j:1.8'
     // Override the vulnerable Log4j API pulled transitively by Office tooling.
-    implementation 'org.apache.logging.log4j:log4j-api:2.25.5'
+    implementation 'org.apache.logging.log4j:log4j-api:2.26.1'
     runtimeOnly 'org.slf4j:slf4j-nop:1.7.36'
 
     ofdWorkerImplementation('org.ofdrw:ofdrw-converter:2.4.0') {
