@@ -45,7 +45,7 @@ dependencies {
     implementation 'com.google.re2j:re2j:1.8'
     // Override the vulnerable Log4j API pulled transitively by Office tooling.
     implementation 'org.apache.logging.log4j:log4j-api:2.26.1'
-    runtimeOnly 'org.slf4j:slf4j-nop:1.7.36'
+    runtimeOnly 'org.slf4j:slf4j-nop:2.0.18'
 
     ofdWorkerImplementation('org.ofdrw:ofdrw-converter:2.4.0') {
         exclude group: 'com.itextpdf'
@@ -55,7 +55,7 @@ dependencies {
     ofdWorkerImplementation 'org.apache.pdfbox:pdfbox:2.0.37'
     // OFDRW pulls a 2014 org.json release with known denial-of-service flaws.
     ofdWorkerImplementation 'org.json:json:20260719'
-    ofdWorkerRuntimeOnly 'org.slf4j:slf4j-nop:1.7.36'
+    ofdWorkerRuntimeOnly 'org.slf4j:slf4j-nop:2.0.18'
 
     testImplementation platform('org.junit:junit-bom:6.1.3')
     testImplementation 'org.junit.jupiter:junit-jupiter'
