@@ -33,7 +33,7 @@ dependencies {
     implementation 'org.apache.pdfbox:pdfbox:3.0.8'
     implementation 'org.apache.commons:commons-compress:1.28.0'
     implementation 'org.tukaani:xz:1.10'
-    implementation 'org.xerial:sqlite-jdbc:3.53.1.0'
+    implementation 'org.xerial:sqlite-jdbc:3.53.2.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.1'
     implementation 'net.java.dev.jna:jna:5.19.1'
     implementation 'net.java.dev.jna:jna-platform:5.19.1'
