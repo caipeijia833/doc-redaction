@@ -142,4 +142,4 @@ See [README_EN.md](./README_EN.md) for the English overview, build instructions,
 
 ## 开源发布状态
 
-公开仓库为 `https://github.com/caipeijia833/doc-redaction`，本地目录使用 `main` 分支并配置该地址为 `origin`。源码许可证、贡献规范、安全策略、日志规范和 GitHub Release 分卷工具已准备；发布分卷位于被 Git 忽略的 `release-assets/`，只能作为 Release 附件。版权主体、主要维护者、Release 签名责任人和恢复密钥保管人均已确认为 `caipeijia833`。当前不发布二进制 Release，macOS 13+ 实机验收、签名/公证和 Codex for OSS 申请均为后续事项，不能视为已完成。
+公开仓库为 `https://github.com/caipeijia833/doc-redaction`，本地目录使用 `main` 分支并配置该地址为 `origin`。源码许可证、贡献规范、安全策略、日志规范和 GitHub Release 分卷工具已准备；发布分卷位于被 Git 忽略的 `release-assets/`，只能作为 Release 附件。版权主体、主要维护者、Release 签名责任人和恢复密钥保管人均已确认为 `caipeijia833`。当前不发布二进制 Release，macOS 13+ 实机验收和签名/公证仍为后续事项。Codex for OSS 申请已提交，正在等待 OpenAI 审核；尚未获得任何项目权益，不能视为已获批。
