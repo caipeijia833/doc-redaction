@@ -54,7 +54,7 @@ dependencies {
     // 2.x line in the isolated OFD worker instead of mixing it with PDFBox 3.
     ofdWorkerImplementation 'org.apache.pdfbox:pdfbox:2.0.37'
     // OFDRW pulls a 2014 org.json release with known denial-of-service flaws.
-    ofdWorkerImplementation 'org.json:json:20260719'
+    ofdWorkerImplementation 'org.json:json:20260814'
     ofdWorkerRuntimeOnly 'org.slf4j:slf4j-nop:2.0.18'
 
     testImplementation platform('org.junit:junit-bom:6.1.3')
